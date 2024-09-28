@@ -1,0 +1,97 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.SegmentDetailActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <fragment
+            android:id="@+id/map_fragment"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
+
+        <TextView
+            android:id="@+id/tv_avg_heart_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="평균 심박수: 0"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_min_heart_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="최저 심박수: 0"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_max_heart_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="최고 심박수: 0"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/lineChart"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="16dp" />
+
+        <!-- Title and average heart rate TextView for the bar chart -->
+        <TextView
+            android:id="@+id/tv_bar_chart_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="심박수 운동 영역"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tv_avg_heart_rate_bar_chart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="심박수 기준: 0 BPM"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+
+        <com.github.mikephil.charting.charts.HorizontalBarChart
+            android:id="@+id/horizontalBarChart"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="8dp" />
+
+        <!-- Heart rate zones description -->
+        <TextView
+            android:id="@+id/tv_hr_zone_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="카르보넨 공식, % 심박수 예비"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Heart rate zones details -->
+        <LinearLayout
+            android:id="@+id/hr_zones_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+</ScrollView>

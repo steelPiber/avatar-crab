@@ -1,0 +1,62 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 심박수 결과 값을 표시하는 TextView -->
+    <TextView
+        android:id="@+id/heartRateValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="심박수: -- BPM"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 원형 레이아웃 -->
+    <com.example.avatar_crab.presentation.measure.CircularFrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/heartRateValue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- 카메라 뷰 (심박수 측정용) -->
+        <TextureView
+            android:id="@+id/cameraView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+
+        <!-- 원형 프로그레스 바 (카메라 뷰 테두리) -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:indeterminate="false"
+            android:max="5000"
+            android:progress="0"
+            android:progressDrawable="@drawable/circular_progress_drawable"
+            android:layout_gravity="center"
+            android:padding="10dp"
+            android:scaleX="1.5"
+            android:scaleY="1.5" />
+    </com.example.avatar_crab.presentation.measure.CircularFrameLayout>
+
+    <!-- 심박수 측정 라인 차트 -->
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/heartRateChart"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/frameLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

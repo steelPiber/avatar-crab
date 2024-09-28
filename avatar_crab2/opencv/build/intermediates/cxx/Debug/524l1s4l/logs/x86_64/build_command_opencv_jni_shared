@@ -1,0 +1,4 @@
+/home/alan/Android/Sdk/cmake/3.22.1/bin/ninja \
+  -C \
+  "/home/alan/AndroidStudioProjects/AndroidStudioProjects (7)/avatar_crab2/opencv/.cxx/Debug/524l1s4l/x86_64" \
+  opencv_jni_shared
