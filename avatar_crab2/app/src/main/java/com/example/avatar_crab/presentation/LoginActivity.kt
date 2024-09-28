@@ -6,8 +6,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.avatar_crab.R
-import com.example.avatar_crab.data.UserInfo
-import com.example.avatar_crab.presentation.RetrofitClient
+import com.example.avatar_crab.presentation.userinfo.UserInfoActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
