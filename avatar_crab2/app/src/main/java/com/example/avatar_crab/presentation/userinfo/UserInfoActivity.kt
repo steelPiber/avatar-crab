@@ -12,6 +12,7 @@ import com.example.avatar_crab.R
 import com.example.avatar_crab.presentation.MainActivity
 import com.example.avatar_crab.presentation.RetrofitClient
 import com.example.avatar_crab.presentation.data.UserInfo
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -21,6 +22,18 @@ class UserInfoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 이미 로그인된 사용자가 있는지 확인
+        val account = GoogleSignIn.getLastSignedInAccount(this)
+        if (account != null) {
+            // 로그인된 사용자가 있으면 MainActivity로 이동
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()  // UserInfoActivity 종료
+            return
+        }
+
+        // 로그인되지 않은 경우 신체 정보 입력 화면 표시
         setContentView(R.layout.activity_user_info)
 
         email = intent.getStringExtra("email") ?: ""
