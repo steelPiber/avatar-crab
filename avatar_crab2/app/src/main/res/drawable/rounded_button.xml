@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 버튼 배경 색상 설정 -->
+    <solid android:color="@color/colorPrimary" />
+
+    <!-- 버튼 모서리 둥글게 처리 -->
+    <corners android:radius="12dp" />
+
+    <!-- 버튼 패딩 설정 -->
+    <padding
+        android:left="10dp"
+        android:top="10dp"
+        android:right="10dp"
+        android:bottom="10dp" />
+
+    <!-- 그림자 또는 버튼 눌림 효과 추가 가능 -->
+    <stroke
+        android:width="2dp"
+        android:color="@color/colorPrimaryDark" />
+</shape>
