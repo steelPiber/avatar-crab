@@ -10,18 +10,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
+import com.example.avatar_crab.MyApplication
 import com.example.avatar_crab.R
-import com.example.avatar_crab.presentation.challenge.ChallengeFragment
+import com.example.avatar_crab.presentation.data.UserInfo
 import com.example.avatar_crab.presentation.map.MapFragment
 import com.example.avatar_crab.presentation.measure.MeasureFragment
-import com.example.avatar_crab.presentation.settings.SettingsViewModel
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -34,10 +33,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.*
+
 class HomeFragment : Fragment() {
-    private val viewModel: MainViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModels {
+        val application = requireActivity().application as MyApplication
+        MainViewModelFactory(application.challengeRepository, application)
+    }
     private lateinit var heartRateChart: LineChart
     private lateinit var stressChart: LineChart
     private lateinit var profileImageView: ImageView
@@ -68,6 +72,9 @@ class HomeFragment : Fragment() {
         tvChallenge = view.findViewById(R.id.tvChallenge)
         heartRateChart = view.findViewById(R.id.heartRateChart)
         stressChart = view.findViewById(R.id.stressChart)
+
+        // 로컬에서 유저 정보 로드
+        loadUserInfo()
 
         setupChart(heartRateChart, "심박수")
         setupChart(stressChart, "스트레스")
@@ -115,7 +122,27 @@ class HomeFragment : Fragment() {
             heartRateTextView.text = "$heartRate BPM"
         })
 
+    }
 
+    private fun loadUserInfo() {
+        val sharedPreferences = requireActivity().getSharedPreferences("AvatarCrabPrefs", Context.MODE_PRIVATE)
+        val userInfoJson = sharedPreferences.getString("userInfo", null)
+        val photoUrl = sharedPreferences.getString("photoUrl", null) // 사진 URL 로드
+
+        if (userInfoJson != null) {
+            val userInfo = Gson().fromJson(userInfoJson, UserInfo::class.java)
+            tvUserName.text = userInfo.name
+
+            // 저장된 사진 URL이 있다면 로드
+            if (photoUrl != null) {
+                Glide.with(this).load(photoUrl).into(profileImageView)
+            }
+        } else {
+            // 유저 정보가 없으면 로그인으로 이동
+            val intent = Intent(requireActivity(), LoginActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
+        }
     }
 
     private fun setCurrentDate() {
@@ -132,10 +159,20 @@ class HomeFragment : Fragment() {
     private fun handleSignInResult(task: Task<GoogleSignInAccount>) {
         try {
             val account = task.getResult(ApiException::class.java)
-            account?.let { updateUserProfile(it) }
+            account?.let {
+                updateUserProfile(it)
+                savePhotoUrlToLocal(it.photoUrl.toString()) // photoUrl 로컬 저장
+            }
         } catch (e: ApiException) {
             Log.w("HomeFragment", "signInResult:failed code=" + e.statusCode)
         }
+    }
+
+    private fun savePhotoUrlToLocal(photoUrl: String) {
+        val sharedPreferences = requireActivity().getSharedPreferences("AvatarCrabPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("photoUrl", photoUrl)
+        editor.apply()
     }
 
     fun updateUserProfile(account: GoogleSignInAccount) {
@@ -175,5 +212,4 @@ class HomeFragment : Fragment() {
             .addToBackStack(null)
             .commit()
     }
-
 }

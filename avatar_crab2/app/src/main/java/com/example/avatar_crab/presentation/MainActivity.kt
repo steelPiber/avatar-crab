@@ -4,29 +4,26 @@ import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.work.*
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.example.avatar_crab.MyApplication
 import com.example.avatar_crab.R
-import com.example.avatar_crab.data.ActivityData
 import com.example.avatar_crab.presentation.dashboard.DashboardFragment
-import com.example.avatar_crab.presentation.exercise.ExerciseFragment
 import com.example.avatar_crab.presentation.measure.MeasureFragment
 import com.example.avatar_crab.presentation.monitor.HeartRateMonitor
 import com.example.avatar_crab.presentation.settings.SettingsFragment
@@ -39,7 +36,6 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
@@ -47,7 +43,7 @@ import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Locale
+import java.util.*
 
 class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -55,6 +51,7 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         val application = application as MyApplication
         MainViewModelFactory(application.challengeRepository, application)
     }
+
     //heartrateMonitor클래스 가져 옴
     private lateinit var heartRateMonitor: HeartRateMonitor
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -63,12 +60,23 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // 로컬 저장소에서 UserInfo 데이터 확인
+        val sharedPreferences = getSharedPreferences("AvatarCrabPrefs", Context.MODE_PRIVATE)
+        val userInfoJson = sharedPreferences.getString("userInfo", null)
 
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, HomeFragment())
-                .commit()
+        if (userInfoJson != null) {
+            // UserInfo 데이터가 있을 경우 HomeFragment로 이동
+            val intent = Intent(this, HomeFragment::class.java)
+            startActivity(intent)
+        } else {
+            // UserInfo 데이터가 없을 경우 LoginActivity로 이동
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
         }
+
+        finish() // MainActivity 종료
+
+
         // HeartRateMonitor 초기화
         heartRateMonitor = HeartRateMonitor(this)
 
@@ -103,6 +111,20 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         // 워치 데이터 리스너 등록
         Wearable.getDataClient(this).addListener(this)
     }
+
+    private fun navigateToHome() {
+        val homeFragment = HomeFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, homeFragment)
+            .commit()
+    }
+
+    private fun navigateToLogin() {
+        val loginIntent = Intent(this, LoginActivity::class.java)
+        startActivity(loginIntent)
+        finish() // 현재 액티비티 종료
+    }
+
     // 위치를 가져오는 메서드
     private fun getLocation(): Location? {
         var currentLocation: Location? = null
@@ -137,7 +159,6 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         transaction.addToBackStack(null)
         transaction.commitAllowingStateLoss()
     }
-
 
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
@@ -206,7 +227,6 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
             }
         }
     }
-
 
     private fun sendDataToServer(
         bpm: String?,

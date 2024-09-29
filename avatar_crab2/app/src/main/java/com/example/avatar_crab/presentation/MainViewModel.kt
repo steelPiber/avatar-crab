@@ -192,11 +192,15 @@ class MainViewModel(
 
     fun setUserAccount(account: GoogleSignInAccount?) {
         _userAccount.value = account
-        sharedPreferences.edit().putString("userName", account?.displayName)
-            .putString("userEmail", account?.email)
-            .putString("userPhotoUrl", account?.photoUrl?.toString())
-            .apply()
-        _userEmail.value = account?.email  // Ensure email is updated here
+        _userEmail.value = account?.email
+        account?.let {
+            sharedPreferences.edit().apply {
+                putString("userName", it.displayName)
+                putString("userEmail", it.email)
+                putString("userPhotoUrl", it.photoUrl?.toString())
+                apply()
+            }
+        }
     }
 
     fun addActivityData(data: ActivityData) {
@@ -253,39 +257,50 @@ class MainViewModel(
     }
 
 
+    private var isDataLoaded = false  // 데이터가 이미 로드되었는지 확인하는 변수
+
     private fun loadSavedData() {
+        if (isDataLoaded) {
+            Log.d("MainViewModel", "Data already loaded, skipping")
+            return
+        }
+
         _heartRate.value = sharedPreferences.getString("heartRate", "")
         _dataStatus.value = sharedPreferences.getString("dataStatus", "")
         _activityTag.value = sharedPreferences.getString("activityTag", "")
+
         val userName = sharedPreferences.getString("userName", null)
         val userEmail = sharedPreferences.getString("userEmail", null)
         val userPhotoUrl = sharedPreferences.getString("userPhotoUrl", null)
+
+        Log.d("MainViewModel", "loadSavedData - userName: $userName, userEmail: $userEmail, userPhotoUrl: $userPhotoUrl")
+
         if (userName != null && userEmail != null) {
-            val account = GoogleSignInAccount.createDefault().apply {
-                val clazz = this.javaClass
-                try {
-                    clazz.getDeclaredField("zzbe").apply {
-                        isAccessible = true
-                        set(this@apply, userName)
-                    }
-                    clazz.getDeclaredField("zzbq").apply {
-                        isAccessible = true
-                        set(this@apply, userEmail)
-                    }
-                    if (userPhotoUrl != null) {
-                        clazz.getDeclaredField("zzbr").apply {
-                            isAccessible = true
-                            set(this@apply, Uri.parse(userPhotoUrl))
-                        }
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
+            _userEmail.value = userEmail
+
+            _userAccount.value = GoogleSignInAccount.createDefault().apply {
+                val emailField = this.email ?: userEmail
+                val displayNameField = this.displayName ?: userName
+                _userEmail.value = emailField
+
+                val photoUri = this.photoUrl ?: Uri.parse(userPhotoUrl)
+                Log.d("MainViewModel", "loadSavedData - photoUri: $photoUri")
+
+                _userAccount.value = this.apply {
+                    Log.d("MainViewModel", "loadSavedData - userAccount updated")
                 }
             }
-            _userAccount.value = account
-            _userEmail.value = userEmail  // Ensure email is updated here
+        } else {
+            Log.e("MainViewModel", "loadSavedData - Missing userName or userEmail in SharedPreferences")
         }
+
+        isDataLoaded = true  // 데이터가 로드되었음을 기록
     }
+
+
+
+
+
 
     private fun loadActivityDataFromDb() {
         viewModelScope.launch(Dispatchers.IO) {

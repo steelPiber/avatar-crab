@@ -2,10 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.avatar_crab">
 
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
-
+    <!-- Permissions -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.BODY_SENSORS"/>
@@ -17,7 +15,6 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.FLASHLIGHT"/>
 
-
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -27,17 +24,17 @@
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
         android:networkSecurityConfig="@xml/network_security_config">
 
-        <!-- 네이버 지도 API 클라이언트 ID 추가 -->
+        <!-- Naver Map API -->
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="c1ka4vgyt7" />
 
-        <!-- Google map 추가 -->
+        <!-- Google Map API -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDgHGTpER1l9P4S9WM01hBAWX6Sag3bpyE" />
 
-        <!-- Google 로그인 관련 메타데이터 추가 -->
+        <!-- Google Sign-In Metadata -->
         <meta-data
             android:name="com.google.android.gms.auth.api.credentials.credential_picker_logo"
             android:resource="@drawable/ic_googleg_disabled_color_18"/>
@@ -45,19 +42,27 @@
             android:name="com.google.android.gms.auth.api.credentials.credential_picker_logo_onclick"
             android:resource="@drawable/ic_googleg_standard_color_18"/>
 
+        <!-- Activities -->
         <activity
-            android:name=".presentation.MainActivity"
-            android:exported="true"
-            android:screenOrientation="portrait"
-            android:taskAffinity="">
+            android:name=".presentation.LoginActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".presentation.MainActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".presentation.userinfo.UserInfoActivity"
+            android:exported="true" />
+
         <activity android:name=".presentation.SegmentDetailActivity" />
 
+        <!-- Services -->
         <service
             android:name=".presentation.MobileWearableService"
             android:exported="true">
@@ -67,5 +72,4 @@
             </intent-filter>
         </service>
     </application>
-
 </manifest>
