@@ -44,101 +44,170 @@ import com.google.android.gms.wearable.Wearable
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import com.example.avatar_crab.presentation.userinfo.UserInfoActivity
 
 class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
+
+    // 위치 정보를 제공하는 FusedLocationProviderClient
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    // MainViewModel을 뷰모델 패턴으로 사용
     private val viewModel: MainViewModel by viewModels {
         val application = application as MyApplication
         MainViewModelFactory(application.challengeRepository, application)
     }
 
-    //heartrateMonitor클래스 가져 옴
+    // HeartRateMonitor 클래스 초기화
     private lateinit var heartRateMonitor: HeartRateMonitor
+
+    // GoogleSignInClient를 사용하여 Google 로그인 처리
     private lateinit var googleSignInClient: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // 로컬 저장소에서 UserInfo 데이터 확인
+        // 로컬 저장소에서 저장된 사용자 정보를 확인
         val sharedPreferences = getSharedPreferences("AvatarCrabPrefs", Context.MODE_PRIVATE)
         val userInfoJson = sharedPreferences.getString("userInfo", null)
 
         if (userInfoJson != null) {
-            // UserInfo 데이터가 있을 경우 HomeFragment로 이동
-            val intent = Intent(this, HomeFragment::class.java)
-            startActivity(intent)
+            // 사용자 정보가 있으면 바로 HomeFragment로 이동
+            navigateToHome()
         } else {
-            // UserInfo 데이터가 없을 경우 LoginActivity로 이동
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            // 사용자 정보가 없으면 로그인 화면으로 이동
+            navigateToLogin()
         }
-
-        finish() // MainActivity 종료
-
 
         // HeartRateMonitor 초기화
         heartRateMonitor = HeartRateMonitor(this)
 
-        // FusedLocationProviderClient 초기화
+        // 위치 제공자 초기화
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        // 위치 권한 확인 및 요청
+        // 위치 권한을 확인하고, 요청
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
         } else {
-            getLocation()
+            getLocation() // 위치 정보 획득
         }
 
         // Google Sign-In 설정
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
-            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestIdToken(getString(R.string.default_web_client_id)) // 웹 클라이언트 ID
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
+        // 이미 로그인된 계정이 있는지 확인
         val account = GoogleSignIn.getLastSignedInAccount(this)
         if (account != null) {
+            // 로그인된 계정이 있으면 ViewModel에 계정 정보 설정
             viewModel.setUserAccount(account)
             lifecycleScope.launch {
-                updateUIWithUserAccount(account)
+                checkUserOnServer(account.email) // 서버에서 사용자 정보 확인 후 UI 업데이트
             }
         } else {
+            // 로그인되지 않았으면 로그인 프로세스 시작
             signIn()
         }
 
-        // 워치 데이터 리스너 등록
+        // 웨어러블 데이터 리스너 등록
         Wearable.getDataClient(this).addListener(this)
     }
 
+    // Google Sign-In 실행
+    private fun signIn() {
+        val signInIntent = googleSignInClient.signInIntent
+        resultLauncher.launch(signInIntent)
+    }
+
+    // Google Sign-In 결과 처리
+    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            handleSignInResult(task)
+        } else {
+            Toast.makeText(this, "Google 로그인이 실패했습니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // 로그인 결과 처리
+    fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            if (account != null) {
+                viewModel.setUserAccount(account)
+                lifecycleScope.launch {
+                    checkUserOnServer(account.email) // 서버에서 사용자 정보 확인
+                }
+            }
+        } catch (e: ApiException) {
+            Log.w("MainActivity", "signInResult:failed code=" + e.statusCode)
+            Toast.makeText(this, "Google 로그인 실패: ${e.statusCode}, ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // 서버에서 해당 이메일의 사용자가 있는지 확인하는 함수
+    private suspend fun checkUserOnServer(email: String?) {
+        if (email != null) {
+            val apiService = RetrofitClient.heartRateInstance
+            val call = apiService.checkUserInfo(email)
+
+            call.enqueue(object : Callback<Boolean> {
+                override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                    if (response.isSuccessful && response.body() == true) {
+                        // 사용자 정보가 존재하면 HomeFragment로 이동
+                        navigateToHome()
+                    } else {
+                        // 사용자 정보가 없으면 UserInfoActivity로 이동
+                        val intent = Intent(this@MainActivity, UserInfoActivity::class.java)
+                        intent.putExtra("email", email)
+                        startActivity(intent)
+                        finish() // MainActivity 종료
+                    }
+                }
+
+                override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                    Toast.makeText(this@MainActivity, "서버 확인 실패: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+    }
+
+    // HomeFragment로 이동하는 함수
     private fun navigateToHome() {
         val homeFragment = HomeFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, homeFragment)
             .commit()
+        finish() // MainActivity 종료
     }
 
+    // LoginActivity로 이동하는 함수
     private fun navigateToLogin() {
         val loginIntent = Intent(this, LoginActivity::class.java)
         startActivity(loginIntent)
-        finish() // 현재 액티비티 종료
+        finish() // MainActivity 종료
     }
 
-    // 위치를 가져오는 메서드
+    // 현재 위치 정보를 얻는 메서드
     private fun getLocation(): Location? {
         var currentLocation: Location? = null
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                if (location != null) {
-                    currentLocation = location
-                }
+                currentLocation = location
             }
         }
         return currentLocation
     }
 
+    // 알림 채널 생성 (API 레벨 26 이상에서만 작동)
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = getString(R.string.notification_channel_name)
@@ -153,48 +222,7 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         }
     }
 
-    fun openFragment(fragment: Fragment, tag: String? = null) {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragment_container, fragment, tag)
-        transaction.addToBackStack(null)
-        transaction.commitAllowingStateLoss()
-    }
-
-    private fun signIn() {
-        val signInIntent = googleSignInClient.signInIntent
-        resultLauncher.launch(signInIntent)
-    }
-
-    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            handleSignInResult(task)
-        } else {
-            Toast.makeText(this, "Google 로그인이 실패했습니다.", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
-        try {
-            val account = completedTask.getResult(ApiException::class.java)
-            if (account != null) {
-                viewModel.setUserAccount(account)
-                lifecycleScope.launch {
-                    updateUIWithUserAccount(account)
-                }
-            }
-        } catch (e: ApiException) {
-            Log.w("MainActivity", "signInResult:failed code=" + e.statusCode)
-            Toast.makeText(this, "Google 로그인 실패: ${e.statusCode}, ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private suspend fun updateUIWithUserAccount(account: GoogleSignInAccount) {
-        val homeFragment = supportFragmentManager.findFragmentByTag("HomeFragment") as? HomeFragment
-        homeFragment?.updateUserProfile(account)
-        viewModel.setUserEmail(account.email) // 이메일 저장
-    }
-
+    // 웨어러블 기기에서 데이터가 변경되었을 때 호출되는 메서드
     override fun onDataChanged(dataEvents: DataEventBuffer) {
         for (event in dataEvents) {
             if (event.type == DataEvent.TYPE_CHANGED) {
@@ -220,7 +248,7 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
                         viewModel.addHeartRateDataToBuffer(bpm, tag, timestamp)
                     }
                     if (bpm != null) {
-                        // Update ViewModel with new heart rate
+                        // ViewModel에 실시간 심박수 업데이트
                         viewModel.updateRealTimeHeartRate(bpm)
                     }
                 }
@@ -228,14 +256,15 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         }
     }
 
+    // 서버로 데이터를 전송하는 메서드
     private fun sendDataToServer(
         bpm: String?,
         tag: String?,
         timestamp: String?,
         email: String?,
-        idToken: String,
+        idToken: String
     ) {
-        // 위치값을 추가로 가져와서 넘김
+        // 위치 정보를 가져와서 서버로 전송
         val location = getLocation()
         val latitude = location?.latitude
         val longitude = location?.longitude
@@ -257,13 +286,15 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         WorkManager.getInstance(this).enqueue(heartRateWorkRequest)
     }
 
+    // 액티비티가 종료될 때 호출되는 메서드
     override fun onDestroy() {
         super.onDestroy()
-        Wearable.getDataClient(this).removeListener(this)
+        Wearable.getDataClient(this).removeListener(this) // 웨어러블 데이터 리스너 해제
     }
 
     companion object {
-        const val LOCATION_PERMISSION_REQUEST_CODE = 1 // 상수 정의
-        const val RC_SIGN_IN = 9001
+        const val LOCATION_PERMISSION_REQUEST_CODE = 1 // 위치 권한 요청 코드
+        const val RC_SIGN_IN = 9001 // Google Sign-In 요청 코드
     }
 }
+

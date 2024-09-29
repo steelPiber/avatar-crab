@@ -82,27 +82,33 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        // SharedPreferences에서 UserInfo 확인
-        val sharedPreferences = getSharedPreferences("AvatarCrabPrefs", Context.MODE_PRIVATE)
-        val userInfoJson = sharedPreferences.getString("userInfo", null)
+        // 서버에서 사용자 정보 존재 여부 확인
+        RetrofitClient.heartRateInstance.checkUserInfo(email).enqueue(object : Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                if (response.isSuccessful && response.body() == true) {
+                    // 사용자 정보가 이미 존재하는 경우 HomeFragment로 이동
+                    navigateToHome()  // HomeFragment로 이동
+                } else {
+                    // 사용자 정보가 없는 경우 UserInfoActivity로 이동
+                    val intent = Intent(this@LoginActivity, UserInfoActivity::class.java)
+                    intent.putExtra("email", email)
+                    startActivity(intent)
+                    finish()  // LoginActivity 종료
+                }
+            }
 
-        if (userInfoJson != null) {
-            // UserInfo 데이터가 존재하는 경우 HomeFragment로 이동
-            navigateToMain()
-        } else {
-            // UserInfo 데이터가 없는 경우 UserInfoActivity로 이동
-            val intent = Intent(this, UserInfoActivity::class.java)
-            intent.putExtra("email", email)
-            startActivity(intent)
-            finish() // LoginActivity 종료
-        }
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                Toast.makeText(this@LoginActivity, "서버 요청 실패: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
-    // MainActivity로 이동
-    private fun navigateToMain() {
+    // MainActivity의 HomeFragment로 이동
+    private fun navigateToHome() {
         val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("navigateTo", "HomeFragment")  // HomeFragment로 바로 이동하도록 설정
         startActivity(intent)
-        finish() // LoginActivity 종료
+        finish()  // LoginActivity 종료
     }
 }
 

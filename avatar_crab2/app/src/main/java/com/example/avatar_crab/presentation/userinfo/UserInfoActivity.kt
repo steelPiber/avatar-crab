@@ -2,6 +2,7 @@ package com.example.avatar_crab.presentation.userinfo
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioButton
@@ -46,6 +47,8 @@ class UserInfoActivity : AppCompatActivity() {
 
             if (name.isNotEmpty() && gender.isNotEmpty() && age != null && height != null && weight != null) {
                 val userInfo = UserInfo(email, name, gender, age, height, weight)
+                Log.d("UserInfoActivity", "Sending UserInfo: $userInfo")
+
                 // 서버에 UserInfo 저장
                 sendUserInfoToServer(userInfo)
             } else {
@@ -69,6 +72,7 @@ class UserInfoActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("UserInfoActivity", "서버 요청 실패: ${t.message}", t)
                 Toast.makeText(this@UserInfoActivity, "서버 요청 실패: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
         })
