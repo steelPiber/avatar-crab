@@ -31,7 +31,7 @@ class ExerciseService : LifecycleService() {
         super.onCreate()
         val appDatabase = AppDatabase.getDatabase(application) // AppDatabase 인스턴스를 가져옵니다.
         val challengeRepository = ChallengeRepository(appDatabase.challengeDao(), appDatabase.exerciseRecordDao()) // ChallengeRepository 인스턴스를 생성합니다.
-        val factory = MainViewModelFactory(challengeRepository, application)
+        val factory = MainViewModelFactory(challengeRepository,application)  // 순서 변경
         viewModel = ViewModelProvider(this as ViewModelStoreOwner, factory).get(MainViewModel::class.java)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationCallback = object : LocationCallback() {

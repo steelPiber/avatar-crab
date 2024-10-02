@@ -8,11 +8,11 @@ import com.example.avatar_crab.presentation.MainViewModel
 class MainViewModelFactory(
     private val challengeRepository: ChallengeRepository,
     private val application: Application
-) : ViewModelProvider.Factory {  // AndroidViewModelFactory 대신 Factory 사용
+) : ViewModelProvider.AndroidViewModelFactory(application) {
 
-    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
             return MainViewModel(challengeRepository, application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
