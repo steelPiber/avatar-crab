@@ -13,45 +13,61 @@
         android:scaleType="centerCrop"
         android:src="@drawable/ic_profile_placeholder" />
 
-    <TextView
-        android:id="@+id/tvName"
+    <EditText
+        android:id="@+id/etName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Name"
+        android:hint="이름"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_gravity="center"/>
 
-    <TextView
-        android:id="@+id/tvHeight"
+    <RadioGroup
+        android:id="@+id/radioGroupGender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Height"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp">
+
+        <RadioButton
+            android:id="@+id/radioMale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="남자"/>
+
+        <RadioButton
+            android:id="@+id/radioFemale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="여자"/>
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/etHeight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="키"
+        android:inputType="numberDecimal"
         android:layout_gravity="center"
         android:layout_marginTop="8dp"/>
 
-    <TextView
-        android:id="@+id/tvWeight"
+    <EditText
+        android:id="@+id/etWeight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Weight"
+        android:hint="몸무게"
+        android:inputType="numberDecimal"
         android:layout_gravity="center"
         android:layout_marginTop="8dp"/>
 
-    <TextView
-        android:id="@+id/tvGender"
+    <EditText
+        android:id="@+id/etAge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Gender"
+        android:hint="나이"
+        android:inputType="number"
         android:layout_gravity="center"
         android:layout_marginTop="8dp"/>
-
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Logout"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"/>
 </LinearLayout>

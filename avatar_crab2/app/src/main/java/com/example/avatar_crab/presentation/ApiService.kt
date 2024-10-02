@@ -32,5 +32,10 @@ interface ApiService {
     // 이메일을 사용하여 유저 정보를 가져오는 GET 요청
     @GET("/userinfo/{email}")
     fun getUserInfo(@Path("email") email: String): Call<UserInfo>
+
+    // 사용자 정보 업데이트 API 호출
+    @POST("/user/update")
+    fun updateUserInfo(@Body userInfo: UserInfo): Call<Void>
+
 }
 

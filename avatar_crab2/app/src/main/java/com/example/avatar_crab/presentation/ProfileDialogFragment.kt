@@ -1,19 +1,29 @@
 package com.example.avatar_crab.presentation
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.example.avatar_crab.R
-
 import com.example.avatar_crab.presentation.data.UserInfo
+import androidx.fragment.app.activityViewModels
+import com.example.avatar_crab.MyApplication
+
 class ProfileDialogFragment(private val userInfo: UserInfo, private val profileImageUrl: String?) : DialogFragment() {
+
+    // MainViewModel을 Fragment에서 사용하도록 초기화
+    private val viewModel: MainViewModel by activityViewModels {
+        MainViewModelFactory(
+            (requireActivity().application as MyApplication).challengeRepository,
+            requireActivity().application
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,33 +32,86 @@ class ProfileDialogFragment(private val userInfo: UserInfo, private val profileI
         val view = inflater.inflate(R.layout.dialog_profile, container, false)
 
         val profileImageView = view.findViewById<ImageView>(R.id.dialogProfileImageView)
-        val tvName = view.findViewById<TextView>(R.id.tvName)
-        val tvHeight = view.findViewById<TextView>(R.id.tvHeight)
-        val tvWeight = view.findViewById<TextView>(R.id.tvWeight)
-        val tvGender = view.findViewById<TextView>(R.id.tvGender)
-        val btnLogout = view.findViewById<Button>(R.id.btnLogout)
+        val etName = view.findViewById<EditText>(R.id.etName)
+        val etHeight = view.findViewById<EditText>(R.id.etHeight)
+        val etWeight = view.findViewById<EditText>(R.id.etWeight)
+        val etAge = view.findViewById<EditText>(R.id.etAge)
+        val radioGroupGender = view.findViewById<RadioGroup>(R.id.radioGroupGender)
+        val radioMale = view.findViewById<RadioButton>(R.id.radioMale)
+        val radioFemale = view.findViewById<RadioButton>(R.id.radioFemale)
 
         // 유저 정보 설정
-        tvName.text = userInfo.name
-        tvHeight.text = "키: ${userInfo.height} cm"
-        tvWeight.text = "몸무게: ${userInfo.weight} kg"
-        tvGender.text = "성별: ${userInfo.gender}"
+        etName.setText(userInfo.name)
+        etHeight.setText(userInfo.height.toString())
+        etWeight.setText(userInfo.weight.toString())
+        etAge.setText(userInfo.age.toString())
+
+        // 성별 설정
+        if (userInfo.gender == "남자") {
+            radioMale.isChecked = true
+        } else {
+            radioFemale.isChecked = true
+        }
 
         // 프로필 이미지 로드
         profileImageUrl?.let {
             Glide.with(this)
                 .load(it)
-                .placeholder(R.drawable.ic_profile_placeholder) // 이미지 로드 전 임시 이미지
-                .error(R.drawable.ic_profile_placeholder) // 이미지 로드 실패 시 대체 이미지
+                .placeholder(R.drawable.ic_profile_placeholder)
+                .error(R.drawable.ic_profile_placeholder)
                 .into(profileImageView)
         }
 
-        // 로그아웃 버튼 클릭 이벤트 처리
-        btnLogout.setOnClickListener {
-            // 로그아웃 처리 로직 추가
-            dismiss()
+        // 완료 버튼 클릭 시 정보 자동 저장
+        etName.setOnEditorActionListener { _, _, _ ->
+            saveProfileData()
+            true
+        }
+
+        etHeight.setOnEditorActionListener { _, _, _ ->
+            saveProfileData()
+            true
+        }
+
+        etWeight.setOnEditorActionListener { _, _, _ ->
+            saveProfileData()
+            true
+        }
+
+        etAge.setOnEditorActionListener { _, _, _ ->
+            saveProfileData()
+            true
         }
 
         return view
+    }
+
+    private fun saveProfileData() {
+        val updatedName = view?.findViewById<EditText>(R.id.etName)?.text.toString()
+        val updatedHeight = view?.findViewById<EditText>(R.id.etHeight)?.text.toString().toDoubleOrNull() ?: userInfo.height
+        val updatedWeight = view?.findViewById<EditText>(R.id.etWeight)?.text.toString().toDoubleOrNull() ?: userInfo.weight
+        val updatedAge = view?.findViewById<EditText>(R.id.etAge)?.text.toString().toIntOrNull() ?: userInfo.age
+
+        // 성별 선택
+        val updatedGender = if (view?.findViewById<RadioButton>(R.id.radioMale)?.isChecked == true) {
+            "남자"
+        } else {
+            "여자"
+        }
+
+        // 서버로 수정된 정보 전송
+        val updatedUserInfo = UserInfo(
+            name = updatedName,
+            height = updatedHeight,
+            weight = updatedWeight,
+            age = updatedAge,
+            gender = updatedGender,
+            email = userInfo.email
+        )
+
+        // 서버에 수정된 정보를 저장하는 ViewModel 메서드 호출
+        viewModel.updateUserInfo(updatedUserInfo)
+
+        dismiss() // 다이얼로그 닫기
     }
 }
