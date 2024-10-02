@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.avatar_crab.R
@@ -21,18 +22,33 @@ class UserInfoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_info)
 
+        // 이메일 정보를 Intent로부터 가져옴
         email = intent.getStringExtra("email") ?: ""
 
         // 신체 정보 입력 폼 제출 시
         val submitButton = findViewById<Button>(R.id.submit_button)
         submitButton.setOnClickListener {
             val name = findViewById<EditText>(R.id.name_input).text.toString()
-            val gender = findViewById<EditText>(R.id.gender_input).text.toString()
-            val age = findViewById<EditText>(R.id.age_input).text.toString().toInt()
-            val height = findViewById<EditText>(R.id.height_input).text.toString().toDouble()
-            val weight = findViewById<EditText>(R.id.weight_input).text.toString().toDouble()
+            val genderGroup = findViewById<RadioGroup>(R.id.gender_group)
+            val selectedGenderId = genderGroup.checkedRadioButtonId
+            val selectedGender = if (selectedGenderId == R.id.gender_male) "남자" else "여자"
 
-            val userInfo = UserInfo(email, name, gender, age, height, weight)
+            // 나이, 키, 몸무게는 입력값이 없을 경우 예외 처리
+            val ageText = findViewById<EditText>(R.id.age_input).text.toString()
+            val heightText = findViewById<EditText>(R.id.height_input).text.toString()
+            val weightText = findViewById<EditText>(R.id.weight_input).text.toString()
+
+            if (name.isEmpty() || ageText.isEmpty() || heightText.isEmpty() || weightText.isEmpty()) {
+                Toast.makeText(this, "모든 정보를 입력해주세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val age = ageText.toInt()
+            val height = heightText.toDouble()
+            val weight = weightText.toDouble()
+
+            val userInfo = UserInfo(email, name, selectedGender, age, height, weight)
+
             // 서버에 신체 정보 전송
             sendUserInfoToServer(userInfo)
         }
@@ -85,7 +101,9 @@ class UserInfoActivity : AppCompatActivity() {
     // 조회한 정보가 입력한 정보와 일치하는지 확인하는 함수
     private fun validateUserInfo(savedUserInfo: UserInfo): Boolean {
         val name = findViewById<EditText>(R.id.name_input).text.toString()
-        val gender = findViewById<EditText>(R.id.gender_input).text.toString()
+        val genderGroup = findViewById<RadioGroup>(R.id.gender_group)
+        val selectedGenderId = genderGroup.checkedRadioButtonId
+        val gender = if (selectedGenderId == R.id.gender_male) "남자" else "여자"
         val age = findViewById<EditText>(R.id.age_input).text.toString().toInt()
         val height = findViewById<EditText>(R.id.height_input).text.toString().toDouble()
         val weight = findViewById<EditText>(R.id.weight_input).text.toString().toDouble()

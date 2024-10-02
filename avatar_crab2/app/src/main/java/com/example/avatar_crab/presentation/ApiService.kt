@@ -26,11 +26,11 @@ interface ApiService {
     fun getSegments(@Path("email") email: String, @Path("id") recordId: String): Call<List<SegmentDataEntity>>
 
     // 서버로 유저 정보를 보내는 POST 요청
-    @POST("/api/userinfo")
+    @POST("/userinfo")
     fun sendUserInfo(@Body userInfo: UserInfo): Call<Void>
 
     // 이메일을 사용하여 유저 정보를 가져오는 GET 요청
-    @GET("/api/userinfo/{email}")
+    @GET("/userinfo/{email}")
     fun getUserInfo(@Path("email") email: String): Call<UserInfo>
 }
 

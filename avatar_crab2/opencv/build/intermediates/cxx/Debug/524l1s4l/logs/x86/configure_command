@@ -1,5 +1,5 @@
 /home/alan/Android/Sdk/cmake/3.22.1/bin/cmake \
-  "-H/home/alan/AndroidStudioProjects/AndroidStudioProjects (7)/avatar_crab2/opencv/libcxx_helper" \
+  "-H/home/alan/AndroidStudioProjects/AndroidStudioProjects (7)/git-avatr_crab/avatar_crab2/opencv/libcxx_helper" \
   -DCMAKE_SYSTEM_NAME=Android \
   -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
   -DCMAKE_SYSTEM_VERSION=21 \
@@ -10,9 +10,9 @@
   -DCMAKE_ANDROID_NDK=/home/alan/Android/Sdk/ndk/26.1.10909125 \
   -DCMAKE_TOOLCHAIN_FILE=/home/alan/Android/Sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake \
   -DCMAKE_MAKE_PROGRAM=/home/alan/Android/Sdk/cmake/3.22.1/bin/ninja \
-  "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/home/alan/AndroidStudioProjects/AndroidStudioProjects (7)/avatar_crab2/opencv/build/intermediates/cxx/Debug/524l1s4l/obj/x86" \
-  "-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/home/alan/AndroidStudioProjects/AndroidStudioProjects (7)/avatar_crab2/opencv/build/intermediates/cxx/Debug/524l1s4l/obj/x86" \
+  "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/home/alan/AndroidStudioProjects/AndroidStudioProjects (7)/git-avatr_crab/avatar_crab2/opencv/build/intermediates/cxx/Debug/524l1s4l/obj/x86" \
+  "-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/home/alan/AndroidStudioProjects/AndroidStudioProjects (7)/git-avatr_crab/avatar_crab2/opencv/build/intermediates/cxx/Debug/524l1s4l/obj/x86" \
   -DCMAKE_BUILD_TYPE=Debug \
-  "-B/home/alan/AndroidStudioProjects/AndroidStudioProjects (7)/avatar_crab2/opencv/.cxx/Debug/524l1s4l/x86" \
+  "-B/home/alan/AndroidStudioProjects/AndroidStudioProjects (7)/git-avatr_crab/avatar_crab2/opencv/.cxx/Debug/524l1s4l/x86" \
   -GNinja \
   -DANDROID_STL=c++_shared

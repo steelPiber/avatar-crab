@@ -6,8 +6,8 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.avatar_crab.R
-import com.example.avatar_crab.data.UserInfo
 import com.example.avatar_crab.presentation.RetrofitClient
+import com.example.avatar_crab.presentation.userinfo.UserInfoActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -20,51 +20,51 @@ import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var googleSignInClient: GoogleSignInClient  // GoogleSignInClient 객체 선언
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_login)  // 레이아웃 설정
 
-        // Configure Google Sign-In options
+        // Google Sign-In 옵션 구성
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()  // 이메일 요청
+            .requestIdToken(getString(R.string.default_web_client_id))  // ID 토큰 요청
             .build()
 
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
+        googleSignInClient = GoogleSignIn.getClient(this, gso)  // GoogleSignInClient 초기화
 
-        // Sign-in button click listener
+        // 로그인 버튼 클릭 리스너 설정
         findViewById<com.google.android.gms.common.SignInButton>(R.id.sign_in_button).setOnClickListener {
-            signIn()
+            signIn()  // 로그인 함수 호출
         }
     }
 
-    // Initiating the Google Sign-In process
+    // Google Sign-In 프로세스 시작
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
-        resultLauncher.launch(signInIntent)
+        resultLauncher.launch(signInIntent)  // 결과를 받기 위해 런처 실행
     }
 
-    // Handle the result of the Google Sign-In process
+    // Google Sign-In 결과 처리
     private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            handleSignInResult(task)
+            handleSignInResult(task)  // 로그인 결과 처리 함수 호출
         } else {
             Toast.makeText(this, "Google 로그인 실패", Toast.LENGTH_SHORT).show()
         }
     }
 
-    // Handle the Google Sign-In result
+    // Google Sign-In 결과 처리 함수
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
             if (account != null) {
                 val email = account.email
-                // Check if the email exists in the Userinfo table
                 if (email != null) {
-                    checkIfUserInfoExists(email)
+                    // 로그인 성공 후 UserInfoActivity로 이동
+                    navigateToUserInfoActivity(email)
                 }
             }
         } catch (e: ApiException) {
@@ -72,31 +72,15 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // Check if the user's info exists in the Userinfo table
-    private fun checkIfUserInfoExists(email: String) {
-        RetrofitClient.recordsInstance.checkUserInfo(email).enqueue(object : Callback<Boolean> {
-            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
-                if (response.isSuccessful && response.body() == true) {
-                    // If user info exists, navigate to MainActivity
-                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                } else {
-                    // If user info does not exist, navigate to UserInfoActivity for data collection
-                    val intent = Intent(this@LoginActivity, UserInfoActivity::class.java)
-                    intent.putExtra("email", email)  // Pass the user's email to the next activity
-                    startActivity(intent)
-                    finish()
-                }
-            }
-
-            override fun onFailure(call: Call<Boolean>, t: Throwable) {
-                Toast.makeText(this@LoginActivity, "서버 요청 실패: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
-            }
-        })
+    // UserInfoActivity로 이동하여 사용자 정보를 수집하거나 업데이트하는 함수
+    private fun navigateToUserInfoActivity(email: String) {
+        val intent = Intent(this, UserInfoActivity::class.java)
+        intent.putExtra("email", email)  // 이메일 정보를 UserInfoActivity로 전달
+        startActivity(intent)
+        finish()  // 현재 Activity 종료
     }
 
-    // Sign out (optional feature if needed)
+    // 로그아웃 기능 (필요한 경우에만 사용)
     private fun signOut() {
         googleSignInClient.signOut().addOnCompleteListener {
             Toast.makeText(this, "로그아웃되었습니다.", Toast.LENGTH_SHORT).show()

@@ -26,6 +26,7 @@ import java.util.Calendar
 import android.location.Location
 import android.util.Log
 import androidx.core.content.ContextCompat
+import com.example.avatar_crab.presentation.data.UserInfo
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
@@ -37,6 +38,10 @@ class MainViewModel(
     private val challengeRepository: ChallengeRepository,
     application: Application
 ) : AndroidViewModel(application) {
+
+    private val _userInfo = MutableLiveData<UserInfo>()
+    val userInfo: LiveData<UserInfo> get() = _userInfo
+
 
     // MutableLiveData to hold heart rate
     private val _realTimeHeartRate = MutableLiveData<Int>()
@@ -429,4 +434,24 @@ class MainViewModel(
         val sharedPreferences = getApplication<Application>().getSharedPreferences("AvatarCrabPrefs", Context.MODE_PRIVATE)
         return sharedPreferences.getString("userEmail", null)
     }
+    fun fetchUserInfo(email: String) {
+        val call: Call<UserInfo> = RetrofitClient.heartRateInstance.getUserInfo(email)
+        call.enqueue(object : Callback<UserInfo> {
+            override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
+                if (response.isSuccessful) {
+                    // 서버로부터 유저 정보를 성공적으로 받았을 경우
+                    response.body()?.let { userInfo ->
+                        _userInfo.postValue(userInfo) // LiveData 업데이트
+                    }
+                } else {
+                    Log.e("UserInfo", "서버 응답 실패: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<UserInfo>, t: Throwable) {
+                Log.e("UserInfo", "서버 요청 실패: ${t.message}")
+            }
+        })
+    }
+
 }
