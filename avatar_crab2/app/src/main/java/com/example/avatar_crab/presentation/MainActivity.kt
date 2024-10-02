@@ -155,29 +155,28 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
     // 서버에서 해당 이메일의 사용자가 있는지 확인하는 함수
     private suspend fun checkUserOnServer(email: String?) {
         if (email != null) {
-            val apiService = RetrofitClient.heartRateInstance
-            val call = apiService.checkUserInfo(email)
-
+            val call = RetrofitClient.heartRateInstance.checkUserInfo(email)
             call.enqueue(object : Callback<Boolean> {
                 override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
                     if (response.isSuccessful && response.body() == true) {
-                        // 사용자 정보가 존재하면 HomeFragment로 이동
+                        // User exists, navigate to HomeFragment
                         navigateToHome()
                     } else {
-                        // 사용자 정보가 없으면 UserInfoActivity로 이동
+                        // User does not exist, navigate to UserInfoActivity
                         val intent = Intent(this@MainActivity, UserInfoActivity::class.java)
                         intent.putExtra("email", email)
                         startActivity(intent)
-                        finish() // MainActivity 종료
+                        finish()
                     }
                 }
 
                 override fun onFailure(call: Call<Boolean>, t: Throwable) {
-                    Toast.makeText(this@MainActivity, "서버 확인 실패: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "Server check failed: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
                 }
             })
         }
     }
+
 
     // HomeFragment로 이동하는 함수
     private fun navigateToHome() {

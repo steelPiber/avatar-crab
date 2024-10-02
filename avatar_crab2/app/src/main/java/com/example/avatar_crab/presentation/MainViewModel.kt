@@ -469,23 +469,23 @@ class MainViewModel(
         })
     }
     fun updateUserInfo(updatedUserInfo: UserInfo) {
-        // 서버로 수정된 유저 정보를 전송
         val call: Call<Void> = RetrofitClient.heartRateInstance.updateUserInfo(updatedUserInfo)
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Log.d("UserInfo", "사용자 정보 업데이트 성공")
-                    _userInfo.postValue(updatedUserInfo) // LiveData 업데이트
+                    Log.d("UserInfo", "User info updated successfully")
+                    _userInfo.postValue(updatedUserInfo) // Update LiveData
                 } else {
-                    Log.e("UserInfo", "사용자 정보 업데이트 실패: ${response.code()}")
+                    Log.e("UserInfo", "Failed to update user info: ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                Log.e("UserInfo", "사용자 정보 업데이트 중 오류 발생: ${t.message}")
+                Log.e("UserInfo", "Error updating user info: ${t.message}")
             }
         })
     }
+
 
 
 }
