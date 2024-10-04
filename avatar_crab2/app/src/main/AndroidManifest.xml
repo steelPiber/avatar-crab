@@ -42,9 +42,9 @@
             android:name="com.google.android.gms.auth.api.credentials.credential_picker_logo_onclick"
             android:resource="@drawable/ic_googleg_standard_color_18"/>
 
-        <!-- Activities -->
+        <!-- MainActivity를 앱의 시작 액티비티로 설정 -->
         <activity
-            android:name=".presentation.LoginActivity"
+            android:name=".presentation.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -53,7 +53,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.MainActivity"
+            android:name=".presentation.LoginActivity"
             android:exported="true" />
 
         <activity

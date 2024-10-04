@@ -74,13 +74,7 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         val sharedPreferences = getSharedPreferences("AvatarCrabPrefs", Context.MODE_PRIVATE)
         val userInfoJson = sharedPreferences.getString("userInfo", null)
 
-        if (userInfoJson != null) {
-            // 사용자 정보가 있으면 바로 HomeFragment로 이동
-            navigateToHome()
-        } else {
-            // 사용자 정보가 없으면 로그인 화면으로 이동
-            navigateToLogin()
-        }
+        Log.d("MainActivity", "userInfoJson: $userInfoJson") // 로그로 userInfoJson 값 확인
 
         // HeartRateMonitor 초기화
         heartRateMonitor = HeartRateMonitor(this)
@@ -105,15 +99,19 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
 
         // 이미 로그인된 계정이 있는지 확인
         val account = GoogleSignIn.getLastSignedInAccount(this)
+
+        Log.d("MainActivity", "GoogleSignIn account: $account") // 로그로 GoogleSignIn 상태 확인
+
         if (account != null) {
             // 로그인된 계정이 있으면 ViewModel에 계정 정보 설정
             viewModel.setUserAccount(account)
+            // 서버에서 해당 사용자의 유저 정보가 있는지 확인
             lifecycleScope.launch {
                 checkUserOnServer(account.email) // 서버에서 사용자 정보 확인 후 UI 업데이트
             }
         } else {
             // 로그인되지 않았으면 로그인 프로세스 시작
-            signIn()
+            navigateToLogin()
         }
 
         // 웨어러블 데이터 리스너 등록
@@ -142,6 +140,7 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
             val account = completedTask.getResult(ApiException::class.java)
             if (account != null) {
                 viewModel.setUserAccount(account)
+
                 lifecycleScope.launch {
                     checkUserOnServer(account.email) // 서버에서 사용자 정보 확인
                 }
@@ -159,10 +158,10 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
             call.enqueue(object : Callback<Boolean> {
                 override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
                     if (response.isSuccessful && response.body() == true) {
-                        // User exists, navigate to HomeFragment
+                        // 사용자 정보가 존재하면 HomeFragment로 이동
                         navigateToHome()
                     } else {
-                        // User does not exist, navigate to UserInfoActivity
+                        // 사용자 정보가 없으면 UserInfoActivity로 이동
                         val intent = Intent(this@MainActivity, UserInfoActivity::class.java)
                         intent.putExtra("email", email)
                         startActivity(intent)
@@ -171,12 +170,11 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
                 }
 
                 override fun onFailure(call: Call<Boolean>, t: Throwable) {
-                    Toast.makeText(this@MainActivity, "Server check failed: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "서버 확인 실패: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
                 }
             })
         }
     }
-
 
     // HomeFragment로 이동하는 함수
     private fun navigateToHome() {
@@ -184,7 +182,6 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, homeFragment)
             .commit()
-        finish() // MainActivity 종료
     }
 
     // LoginActivity로 이동하는 함수
@@ -204,21 +201,6 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
             }
         }
         return currentLocation
-    }
-
-    // 알림 채널 생성 (API 레벨 26 이상에서만 작동)
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = getString(R.string.notification_channel_name)
-            val descriptionText = getString(R.string.notification_channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel("activity_reminder_channel", name, importance).apply {
-                description = descriptionText
-            }
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
     }
 
     // 웨어러블 기기에서 데이터가 변경되었을 때 호출되는 메서드
@@ -255,36 +237,6 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         }
     }
 
-    // 서버로 데이터를 전송하는 메서드
-    private fun sendDataToServer(
-        bpm: String?,
-        tag: String?,
-        timestamp: String?,
-        email: String?,
-        idToken: String
-    ) {
-        // 위치 정보를 가져와서 서버로 전송
-        val location = getLocation()
-        val latitude = location?.latitude
-        val longitude = location?.longitude
-
-        val inputData = workDataOf(
-            "bpm" to bpm,
-            "tag" to tag,
-            "timestamp" to timestamp,
-            "email" to email,
-            "idToken" to idToken,
-            "latitude" to latitude,   // 위도 추가
-            "longitude" to longitude  // 경도 추가
-        )
-
-        val heartRateWorkRequest = OneTimeWorkRequestBuilder<HeartRateWorker>()
-            .setInputData(inputData)
-            .build()
-
-        WorkManager.getInstance(this).enqueue(heartRateWorkRequest)
-    }
-
     // 액티비티가 종료될 때 호출되는 메서드
     override fun onDestroy() {
         super.onDestroy()
@@ -296,4 +248,3 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         const val RC_SIGN_IN = 9001 // Google Sign-In 요청 코드
     }
 }
-
