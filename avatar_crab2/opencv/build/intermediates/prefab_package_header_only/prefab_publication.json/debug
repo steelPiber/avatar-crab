@@ -1,5 +1,5 @@
 {
-  "installationFolder": "/home/alan/AndroidStudioProjects/AndroidStudioProjects (7)/git-avatr_crab/avatar_crab2/opencv/build/intermediates/prefab_package/debug/prefab",
+  "installationFolder": "/Users/yong/avatar-crab/avatar_crab2/opencv/build/intermediates/prefab_package/debug/prefab",
   "gradlePath": ":opencv",
   "packageInfo": {
     "packageName": "opencv",
@@ -8,7 +8,7 @@
     "modules": [
       {
         "moduleName": "opencv_jni_shared",
-        "moduleHeaders": "/home/alan/AndroidStudioProjects/AndroidStudioProjects (7)/git-avatr_crab/avatar_crab2/opencv/native/jni/include",
+        "moduleHeaders": "/Users/yong/avatar-crab/avatar_crab2/opencv/native/jni/include",
         "moduleExportLibraries": [],
         "abis": []
       }

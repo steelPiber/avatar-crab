@@ -1,13 +1,11 @@
-package com.example.avatar_crab.presentation
-
+import com.google.android.gms.wearable.DataEvent
+import com.google.android.gms.wearable.DataEventBuffer
+import com.google.android.gms.wearable.DataMapItem
 import android.Manifest
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -16,18 +14,16 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
 import com.example.avatar_crab.MyApplication
 import com.example.avatar_crab.R
-import com.example.avatar_crab.presentation.dashboard.DashboardFragment
-import com.example.avatar_crab.presentation.measure.MeasureFragment
+import com.example.avatar_crab.presentation.HomeFragment
+import com.example.avatar_crab.presentation.LoginActivity
+import com.example.avatar_crab.presentation.MainViewModel
+import com.example.avatar_crab.presentation.MainViewModelFactory
+import com.example.avatar_crab.presentation.RetrofitClient
 import com.example.avatar_crab.presentation.monitor.HeartRateMonitor
-import com.example.avatar_crab.presentation.settings.SettingsFragment
-import com.example.avatar_crab.work.HeartRateWorker
+import com.example.avatar_crab.presentation.userinfo.UserInfoActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -37,18 +33,13 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.wearable.DataClient
-import com.google.android.gms.wearable.DataEvent
-import com.google.android.gms.wearable.DataEventBuffer
-import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import com.example.avatar_crab.presentation.userinfo.UserInfoActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
 
@@ -152,29 +143,47 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         }
     }
 
-    // 서버에서 해당 이메일의 사용자가 있는지 확인하는 함수
     private suspend fun checkUserOnServer(email: String?) {
-        if (email != null) {
-            val call = RetrofitClient.heartRateInstance.checkUserInfo(email)
-            call.enqueue(object : Callback<Boolean> {
-                override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
-                    if (response.isSuccessful && response.body() == true) {
+        if (email == null) {
+            // 이메일 정보가 없으면 토스트 메시지 출력
+            Toast.makeText(this@MainActivity, "이메일 정보가 없습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // 서버에 사용자 정보가 있는지 확인하기 위한 API 호출
+        val call = RetrofitClient.heartRateInstance.checkUserInfo(email)
+        call.enqueue(object : Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                if (response.isSuccessful) {
+                    val userExists = response.body() ?: false
+                    if (userExists) {
                         // 사용자 정보가 존재하면 HomeFragment로 이동
                         navigateToHome()
                     } else {
                         // 사용자 정보가 없으면 UserInfoActivity로 이동
-                        val intent = Intent(this@MainActivity, UserInfoActivity::class.java)
-                        intent.putExtra("email", email)
-                        startActivity(intent)
-                        finish()
+                        navigateToUserInfo(email)
                     }
+                } else {
+                    // 서버 응답이 실패한 경우
+                    Log.e("checkUserOnServer", "서버 응답 실패: ${response.errorBody()?.string()}")
+                    Toast.makeText(this@MainActivity, "서버 응답 실패", Toast.LENGTH_SHORT).show()
                 }
+            }
 
-                override fun onFailure(call: Call<Boolean>, t: Throwable) {
-                    Toast.makeText(this@MainActivity, "서버 확인 실패: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
-                }
-            })
-        }
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                // 서버 요청이 실패한 경우
+                Log.e("checkUserOnServer", "서버 요청 실패: ${t.localizedMessage}")
+                Toast.makeText(this@MainActivity, "서버 요청 실패: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    // 사용자 정보를 입력하기 위한 UserInfoActivity로 이동하는 함수
+    private fun navigateToUserInfo(email: String) {
+        val intent = Intent(this@MainActivity, UserInfoActivity::class.java)
+        intent.putExtra("email", email)
+        startActivity(intent)
+        finish()
     }
 
     // HomeFragment로 이동하는 함수
