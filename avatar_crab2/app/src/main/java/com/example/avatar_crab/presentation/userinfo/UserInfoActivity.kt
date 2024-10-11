@@ -1,5 +1,6 @@
 package com.example.avatar_crab.presentation.userinfo
 
+import MainActivity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -8,7 +9,6 @@ import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.avatar_crab.R
-import com.example.avatar_crab.presentation.MainActivity
 import com.example.avatar_crab.presentation.RetrofitClient
 import com.example.avatar_crab.presentation.data.UserInfo
 import retrofit2.Call

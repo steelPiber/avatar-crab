@@ -1,5 +1,6 @@
 package com.example.avatar_crab.presentation
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,9 @@ import com.example.avatar_crab.R
 import com.example.avatar_crab.presentation.data.UserInfo
 import androidx.fragment.app.activityViewModels
 import com.example.avatar_crab.MyApplication
+import com.example.avatar_crab.presentation.LoginActivity
+import com.example.avatar_crab.presentation.MainViewModel
+import com.example.avatar_crab.presentation.MainViewModelFactory
 
 class ProfileDialogFragment(private val userInfo: UserInfo, private val profileImageUrl: String?) : DialogFragment() {
 
@@ -43,6 +47,7 @@ class ProfileDialogFragment(private val userInfo: UserInfo, private val profileI
         val radioMale = view.findViewById<RadioButton>(R.id.radioMale)
         val radioFemale = view.findViewById<RadioButton>(R.id.radioFemale)
         val btnSave = view.findViewById<Button>(R.id.btnSave)
+        val btnLogout = view.findViewById<Button>(R.id.btnLogout)
 
         // 유저 정보 설정
         etName.setText(userInfo.name)
@@ -70,6 +75,11 @@ class ProfileDialogFragment(private val userInfo: UserInfo, private val profileI
         // 수정 버튼 클릭 시 정보 저장
         btnSave.setOnClickListener {
             saveProfileData()
+        }
+
+        // 로그아웃 버튼 클릭 시 처리
+        btnLogout.setOnClickListener {
+            logoutUser()
         }
 
         return view
@@ -101,6 +111,13 @@ class ProfileDialogFragment(private val userInfo: UserInfo, private val profileI
         // 서버에 수정된 정보를 저장하는 ViewModel 메서드 호출
         viewModel.updateUserInfo(updatedUserInfo)
 
+        dismiss() // 다이얼로그 닫기
+    }
+
+    private fun logoutUser() {
+        // LoginActivity로 이동
+        val intent = Intent(requireContext(), LoginActivity::class.java)
+        startActivity(intent)
         dismiss() // 다이얼로그 닫기
     }
 }
