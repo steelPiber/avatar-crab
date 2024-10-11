@@ -13,13 +13,24 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.example.avatar_crab.R
+import com.example.avatar_crab.presentation.MainViewModel
+import com.example.avatar_crab.presentation.RetrofitClient
+import com.example.avatar_crab.presentation.data.MapPolygonData
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.PolygonOverlay
 import com.naver.maps.map.util.FusedLocationSource
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
 class MapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var mapView: MapView
@@ -34,6 +45,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private var isDrawingPolygon = false
     private var currentMarker: Marker? = null
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
+
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -91,6 +104,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         // 위치 추적 모드 설정
         naverMap.locationTrackingMode = LocationTrackingMode.Follow
 
+        // 서버에서 폴리곤 데이터 불러오기
+        loadPolygonDataFromServer()
+
         // 폴리곤 그리기 시작
         naverMap.setOnMapClickListener { _, latLng ->
             if (isDrawingPolygon) {
@@ -116,6 +132,67 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 Toast.makeText(requireContext(), "폴리곤을 완성해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun loadPolygonDataFromServer() {
+        val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(requireContext())
+        val email = account?.email ?: run {
+            Toast.makeText(requireContext(), "사용자 이메일을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val call = RetrofitClient.heartRateInstance.getPolygonData(email)
+        call.enqueue(object : Callback<List<MapPolygonData>> {
+            override fun onResponse(
+                call: Call<List<MapPolygonData>>,
+                response: Response<List<MapPolygonData>>
+            ) {
+                if (response.isSuccessful) {
+                    response.body()?.let { polygonDataList ->
+                        for (polygonData in polygonDataList) {
+                            val points = parseCoordinates(polygonData.coordinates)
+                            val polygon = PolygonOverlay().apply {
+                                coords = points
+                                color = 0x80FF0000.toInt() // 반투명 빨간색
+                                outlineColor = 0xFFFF0000.toInt() // 빨간색 테두리
+                                outlineWidth = 5 // 테두리 두께
+                                map = naverMap
+                            }
+                            polygons.add(polygon)
+
+                            val centerLatLng = getPolygonCenter(points)
+                            val marker = Marker().apply {
+                                position = centerLatLng
+                                captionText = polygonData.title
+                                map = naverMap
+                                setOnClickListener {
+                                    showBottomSheet(this)
+                                    true
+                                }
+                            }
+                            markers.add(marker)
+                        }
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "폴리곤 데이터 로드 실패: ${response.message()}", Toast.LENGTH_SHORT).show()
+                    Log.e("MapFragment", "Server Error: ${response.code()} ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<MapPolygonData>>, t: Throwable) {
+                Toast.makeText(requireContext(), "서버 통신 실패: ${t.message}", Toast.LENGTH_SHORT).show()
+                Log.e("MapFragment", "Network Failure: ${t.message}", t)
+            }
+        })
+    }
+
+    private fun parseCoordinates(coordinates: String): List<LatLng> {
+        // JSON 형식의 문자열을 파싱하여 LatLng 리스트로 변환
+        // 예: [{"lat":37.566, "lng":126.9784}, ...]
+        val regex = Regex("\\{\"lat\":(.*?), \"lng\":(.*?)\\}")
+        return regex.findAll(coordinates).map {
+            LatLng(it.groupValues[1].toDouble(), it.groupValues[2].toDouble())
+        }.toList()
     }
 
     private fun startPolygonDrawing() {
@@ -194,6 +271,34 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         Toast.makeText(requireContext(), "$title 영역이 저장되었습니다.", Toast.LENGTH_SHORT).show()
 
+        // Retrofit을 사용해 폴리곤 데이터 전송
+        val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(requireContext())
+        val email = account?.email ?: run {
+            Toast.makeText(requireContext(), "사용자 이메일을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val coordinatesJson = polygonPoints.joinToString(prefix = "[", postfix = "]") { "{\"lat\":${it.latitude}, \"lng\":${it.longitude}}" }
+        val polygonData = MapPolygonData(email = email, title = title, coordinates = coordinatesJson)
+        Log.d("MapFragment", "Polygon Data to send: $coordinatesJson")
+
+        val call = RetrofitClient.heartRateInstance.sendPolygonData(polygonData)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(requireContext(), "폴리곤 데이터가 서버에 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "서버 저장 실패: ${response.message()}", Toast.LENGTH_SHORT).show()
+                    Log.e("MapFragment", "Server Error: ${response.code()} ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Toast.makeText(requireContext(), "서버 통신 실패: ${t.message}", Toast.LENGTH_SHORT).show()
+                Log.e("MapFragment", "Network Failure: ${t.message}", t)
+            }
+        })
+
         // 다음 폴리곤 그리기를 위해 현재 마커 초기화
         currentMarker = null
     }
@@ -225,47 +330,5 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
         bottomSheetDialog.show()
-    }
-
-    // 권한 요청 결과 처리
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                naverMap.locationTrackingMode = LocationTrackingMode.Follow
-            }
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        mapView.onStart()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mapView.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mapView.onPause()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mapView.onStop()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mapView.onDestroy()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        mapView.onLowMemory()
     }
 }

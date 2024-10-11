@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.example.avatar_crab.R
@@ -36,15 +38,18 @@ class ProfileDialogFragment(private val userInfo: UserInfo, private val profileI
         val etHeight = view.findViewById<EditText>(R.id.etHeight)
         val etWeight = view.findViewById<EditText>(R.id.etWeight)
         val etAge = view.findViewById<EditText>(R.id.etAge)
+        val tvEmail = view.findViewById<TextView>(R.id.tvEmail)
         val radioGroupGender = view.findViewById<RadioGroup>(R.id.radioGroupGender)
         val radioMale = view.findViewById<RadioButton>(R.id.radioMale)
         val radioFemale = view.findViewById<RadioButton>(R.id.radioFemale)
+        val btnSave = view.findViewById<Button>(R.id.btnSave)
 
         // 유저 정보 설정
         etName.setText(userInfo.name)
         etHeight.setText(userInfo.height.toString())
         etWeight.setText(userInfo.weight.toString())
         etAge.setText(userInfo.age.toString())
+        tvEmail.text = userInfo.email
 
         // 성별 설정
         if (userInfo.gender == "남자") {
@@ -62,25 +67,9 @@ class ProfileDialogFragment(private val userInfo: UserInfo, private val profileI
                 .into(profileImageView)
         }
 
-        // 완료 버튼 클릭 시 정보 자동 저장
-        etName.setOnEditorActionListener { _, _, _ ->
+        // 수정 버튼 클릭 시 정보 저장
+        btnSave.setOnClickListener {
             saveProfileData()
-            true
-        }
-
-        etHeight.setOnEditorActionListener { _, _, _ ->
-            saveProfileData()
-            true
-        }
-
-        etWeight.setOnEditorActionListener { _, _, _ ->
-            saveProfileData()
-            true
-        }
-
-        etAge.setOnEditorActionListener { _, _, _ ->
-            saveProfileData()
-            true
         }
 
         return view

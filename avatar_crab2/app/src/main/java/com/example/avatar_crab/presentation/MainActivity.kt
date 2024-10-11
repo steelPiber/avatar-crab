@@ -48,6 +48,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.example.avatar_crab.presentation.userinfo.UserInfoActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
 

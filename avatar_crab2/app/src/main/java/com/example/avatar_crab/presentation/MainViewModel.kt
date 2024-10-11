@@ -100,6 +100,7 @@ class MainViewModel(
         loadExerciseRecords()
         calculateAndSaveDailyAverageHeartRate()
         startSendingHeartRateToServer()
+
     }
 
     //실시간심박 수 값
@@ -111,7 +112,7 @@ class MainViewModel(
         val heartRateData = ActivityData(bpm = bpm, tag = tag, timestamp = timestamp)
         _heartRateBuffer.add(heartRateData)
     }
-    // 10초 간격으로 심박수와 위치 데이터를 전송하는 메서드
+    // 1분 간격으로 심박수와 위치 데이터를 서버로 전송하는 메서드
     private fun startSendingHeartRateToServer() {
         viewModelScope.launch(Dispatchers.IO) {
             while (true) {
@@ -135,7 +136,7 @@ class MainViewModel(
                         sendHeartRateData(heartRateData)
                     }
                 }
-                delay(10000)
+                delay(10000) // 1분 대기
             }
         }
     }
@@ -245,13 +246,12 @@ class MainViewModel(
 
 
     // Retrofit을 사용하여 심박수 데이터를 서버로 전송하는 메서드
-    // 심박수를 서버로 전송하는 메서드
     private fun sendHeartRateData(heartRateData: HeartRateData) {
         val call: Call<Void> = RetrofitClient.heartRateInstance.sendHeartRateData(heartRateData)
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (!response.isSuccessful) {
-                    Log.e("HeartRate", "데이터 전송 실패")
+                    Log.e("HeartRate", "데이터 전송 실패: ${response.code()} ${response.message()}")
                 }
             }
 

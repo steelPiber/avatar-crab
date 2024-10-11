@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:background="@drawable/gradient_background">
 
     <ImageView
         android:id="@+id/dialogProfileImageView"
@@ -11,17 +12,66 @@
         android:layout_height="100dp"
         android:layout_gravity="center"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_profile_placeholder" />
+        android:src="@drawable/ic_profile_placeholder"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:id="@+id/tvProfileTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="프로필 정보"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- 이메일 섹션 -->
+    <TextView
+        android:id="@+id/tvEmailSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="이메일"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/tvEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="18sp"
+        android:layout_marginTop="4dp" />
+
+    <!-- 이름 섹션 -->
+    <TextView
+        android:id="@+id/tvNameSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="이름"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
 
     <EditText
         android:id="@+id/etName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:hint="이름"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:layout_gravity="center"/>
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/black" />
+
+    <!-- 성별 섹션 -->
+    <TextView
+        android:id="@+id/tvGenderSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="성별"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
 
     <RadioGroup
         android:id="@+id/radioGroupGender"
@@ -29,45 +79,87 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="4dp">
 
         <RadioButton
             android:id="@+id/radioMale"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="남자"/>
+            android:text="남자" />
 
         <RadioButton
             android:id="@+id/radioFemale"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="여자"/>
+            android:text="여자" />
     </RadioGroup>
+
+    <!-- 키 섹션 -->
+    <TextView
+        android:id="@+id/tvHeightSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="키"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
 
     <EditText
         android:id="@+id/etHeight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="키 (cm)"
+        android:inputType="numberDecimal"
+        android:textSize="18sp"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/black" />
+
+    <!-- 몸무게 섹션 -->
+    <TextView
+        android:id="@+id/tvWeightSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="키"
-        android:inputType="numberDecimal"
-        android:layout_gravity="center"
-        android:layout_marginTop="8dp"/>
+        android:text="몸무게"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
 
     <EditText
         android:id="@+id/etWeight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="몸무게 (kg)"
+        android:inputType="numberDecimal"
+        android:textSize="18sp"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/black" />
+
+    <!-- 나이 섹션 -->
+    <TextView
+        android:id="@+id/tvAgeSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="몸무게"
-        android:inputType="numberDecimal"
-        android:layout_gravity="center"
-        android:layout_marginTop="8dp"/>
+        android:text="나이"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
 
     <EditText
         android:id="@+id/etAge"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="나이"
         android:inputType="number"
+        android:textSize="18sp"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/black" />
+
+    <!-- 수정 버튼 -->
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="수정 완료"
         android:layout_gravity="center"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="20dp" />
 </LinearLayout>

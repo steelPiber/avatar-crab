@@ -1,108 +1,40 @@
-<ScrollView
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background"
-    android:paddingBottom="32dp"
-    tools:context=".presentation.HomeFragment">
+    android:background="@android:color/white"
+    android:paddingBottom="100dp"
+    tools:context=".presentation.HomeFragment"
+    android:scrollbars="none"
+    android:overScrollMode="always">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- 1행 왼쪽 카드뷰 : 프로필 카드 (아이콘과 텍스트) -->
+        <!-- 1행 왼쪽 카드뷰 : 프로필 카드 (아이콘만 표시) -->
         <androidx.cardview.widget.CardView
             android:id="@+id/userCard"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            app:cardBackgroundColor="#80FFFFFF"
-            app:cardCornerRadius="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/measureCard"
-            app:layout_constraintTop_toTopOf="parent"
-            app:cardElevation="8dp">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp">
-
-                <!-- 프로필 아이콘 -->
-                <ImageView
-                    android:id="@+id/profileImageView"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_default_profile"
-                    android:contentDescription="프로필 이미지"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginEnd="8dp" />
-
-                <!-- 프로필 이름 텍스트 -->
-                <TextView
-                    android:id="@+id/tvUserName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="사용자 이름"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toEndOf="@id/profileImageView"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- 1행 오른쪽 카드뷰 : 측정 카드 (아이콘과 텍스트) -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/measureCard"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            app:cardBackgroundColor="#80FFFFFF"
-            app:cardCornerRadius="16dp"
-            app:layout_constraintStart_toEndOf="@id/userCard"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="50dp"
             app:cardElevation="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp">
-
-                <!-- 측정 아이콘 -->
-                <ImageView
-                    android:id="@+id/measureIcon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_measure"
-                    android:contentDescription="측정 아이콘"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginEnd="8dp" />
-
-                <!-- 측정 텍스트 -->
-                <TextView
-                    android:id="@+id/tvMeasureText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="측 정"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toEndOf="@id/measureIcon"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/profileImageView"
+                android:layout_width="86dp"
+                android:layout_height="85dp"
+                android:contentDescription="프로필 이미지"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_default_profile"
+                app:circleCrop="true" />
         </androidx.cardview.widget.CardView>
 
         <!-- 2행 왼쪽 카드뷰 : 심박수 + 그래프 -->
@@ -111,30 +43,35 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            app:cardBackgroundColor="#80FFFFFF"
+            app:cardBackgroundColor="@android:color/white"
             app:cardCornerRadius="16dp"
-            app:layout_constraintHeight_default="wrap"
+            app:cardElevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/stressCard"
-            app:layout_constraintTop_toBottomOf="@id/userCard"
-            app:cardElevation="8dp">
+            app:layout_constraintTop_toBottomOf="@id/userCard">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="232dp"
-                android:padding="16dp">
+                android:layout_height="wrap_content"
+                android:padding="0dp">
+
 
                 <!-- 심박수 아이콘 상단 오른쪽 -->
+
+                <!-- 심박수 값 상단 왼쪽 -->
+
+                <!-- LineChart for Heart Rate -->
                 <ImageView
                     android:id="@+id/heartIcon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="30dp"
+                    android:layout_height="26dp"
+                    android:layout_marginEnd="352dp"
                     android:contentDescription="@string/heart_image"
                     android:src="@drawable/ic_heart"
+                    app:layout_constraintBottom_toTopOf="@+id/heartRateChart"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <!-- 심박수 값 상단 왼쪽 -->
                 <TextView
                     android:id="@+id/tvHeartRate"
                     android:layout_width="wrap_content"
@@ -143,14 +80,13 @@
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/heartIcon"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <!-- LineChart for Heart Rate -->
                 <com.github.mikephil.charting.charts.LineChart
                     android:id="@+id/heartRateChart"
                     android:layout_width="0dp"
-                    android:layout_height="150dp"
+                    android:layout_height="100dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tvHeartRate" />
@@ -163,30 +99,33 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            app:cardBackgroundColor="#80FFFFFF"
+            app:cardBackgroundColor="@android:color/white"
             app:cardCornerRadius="16dp"
-            app:layout_constraintHeight_default="wrap"
-            app:layout_constraintStart_toEndOf="@id/heartRateCard"
+            app:cardElevation="8dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/userCard"
-            app:cardElevation="8dp">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/heartRateCard">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="232dp"
-                android:padding="16dp">
+                android:layout_height="wrap_content"
+                android:padding="0dp">
 
                 <!-- 스트레스 아이콘 상단 오른쪽 -->
-                <ImageView
-                    android:id="@+id/stressIcon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:contentDescription="@string/stress_image"
-                    android:src="@drawable/ic_stress"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
 
                 <!-- 스트레스 값 상단 왼쪽 -->
+                <ImageView
+                    android:id="@+id/stressIcon"
+                    android:layout_width="38dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="336dp"
+                    android:contentDescription="@string/stress_image"
+                    android:src="@drawable/ic_stress"
+                    app:layout_constraintBottom_toTopOf="@+id/stressChart"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
                 <TextView
                     android:id="@+id/tvStress"
                     android:layout_width="wrap_content"
@@ -195,74 +134,51 @@
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/stressIcon"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <!-- LineChart for Stress -->
                 <com.github.mikephil.charting.charts.LineChart
                     android:id="@+id/stressChart"
                     android:layout_width="0dp"
-                    android:layout_height="150dp"
+                    android:layout_height="100dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tvStress" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- 4행 챌린지 카드뷰 -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/challengeCard"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            app:cardBackgroundColor="#80FFFFFF"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/stressCard">
-
-            <TextView
-                android:id="@+id/tvChallenge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="오늘의 챌린지"
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-        </androidx.cardview.widget.CardView>
-
-        <!-- 기존 카드뷰들 아래에 지도로 보기 카드뷰 추가 -->
+        <!-- 3행 카드뷰 : 지도로 보기 -->
         <androidx.cardview.widget.CardView
             android:id="@+id/mapCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            app:cardBackgroundColor="#80FFFFFF"
+            app:cardBackgroundColor="@android:color/white"
             app:cardCornerRadius="16dp"
             app:cardElevation="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/challengeCard">
+            app:layout_constraintTop_toBottomOf="@id/stressCard">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp">
 
-                <!-- 지도 아이콘 -->
+                <!-- 지도 아이콘 상단 오른쪽 -->
+
+                <!-- 지도로 보기 텍스트 상단 왼쪽 -->
                 <ImageView
                     android:id="@+id/mapIcon"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_map"
+                    android:layout_marginEnd="320dp"
                     android:contentDescription="지도 아이콘"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginEnd="8dp" />
+                    android:src="@drawable/ic_map"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <!-- 지도로 보기 텍스트 -->
                 <TextView
                     android:id="@+id/tvMapText"
                     android:layout_width="wrap_content"
@@ -271,10 +187,21 @@
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toEndOf="@id/mapIcon"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/mapIcon"
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
+
+        <!-- 맨 하단 빈 카드뷰 -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/emptyCard"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_margin="8dp"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mapCard" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>
