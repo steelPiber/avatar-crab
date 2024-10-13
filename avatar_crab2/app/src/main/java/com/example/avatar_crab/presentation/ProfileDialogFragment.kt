@@ -17,9 +17,6 @@ import com.example.avatar_crab.R
 import com.example.avatar_crab.presentation.data.UserInfo
 import androidx.fragment.app.activityViewModels
 import com.example.avatar_crab.MyApplication
-import com.example.avatar_crab.presentation.LoginActivity
-import com.example.avatar_crab.presentation.MainViewModel
-import com.example.avatar_crab.presentation.MainViewModelFactory
 
 class ProfileDialogFragment(private val userInfo: UserInfo, private val profileImageUrl: String?) : DialogFragment() {
 

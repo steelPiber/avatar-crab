@@ -3,6 +3,7 @@ package com.example.avatar_crab.presentation
 import com.example.avatar_crab.data.exercise.ExerciseRecord
 import com.example.avatar_crab.data.exercise.ExerciseRecordEntity
 import com.example.avatar_crab.data.exercise.SegmentDataEntity
+import com.example.avatar_crab.presentation.data.HeartInfo
 import com.example.avatar_crab.presentation.data.MapPolygonData
 import com.example.avatar_crab.presentation.data.UserInfo
 import okhttp3.ResponseBody
@@ -28,7 +29,10 @@ interface ApiService {
     fun getRecords(@Path("email") email: String): Call<List<ExerciseRecordEntity>>
 
     @GET("/records/{email}/{id}/segments")
-    fun getSegments(@Path("email") email: String, @Path("id") recordId: String): Call<List<SegmentDataEntity>>
+    fun getSegments(
+        @Path("email") email: String,
+        @Path("id") recordId: String
+    ): Call<List<SegmentDataEntity>>
 
     // 서버로 유저 정보를 보내는 POST 요청
     @POST("/userinfo")
@@ -58,7 +62,12 @@ interface ApiService {
 
     // 폴리곤 데이터 삭제 (DELETE)
     @DELETE("/mapinfo")
-    fun deletePolygonData(@Query("email") email: String, @Query("title") title: String): Call<ResponseBody>
+    fun deletePolygonData(
+        @Query("email") email: String,
+        @Query("title") title: String
+    ): Call<ResponseBody>
+
+    // 심박수 정보 조회 (GET)
+    @GET("/heartinfo")
+    fun getHeartInfo(@Query("email") email: String): Call<HeartInfo>
 }
-
-

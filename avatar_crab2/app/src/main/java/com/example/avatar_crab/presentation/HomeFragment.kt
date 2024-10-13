@@ -52,6 +52,7 @@ class HomeFragment : Fragment() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var userCard: CardView
     private lateinit var scrollView: NestedScrollView
+    private val apiService by lazy { (requireActivity().application as MyApplication).apiService }
 
     private val signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
@@ -74,8 +75,6 @@ class HomeFragment : Fragment() {
         stressChart = view.findViewById(R.id.stressChart)
         userCard = view.findViewById(R.id.userCard)
         scrollView = view.findViewById(R.id.scrollView)
-
-
 
         // Google Sign-In 설정 및 이벤트 처리
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -130,6 +129,57 @@ class HomeFragment : Fragment() {
             val heartRateTextView = view.findViewById<TextView>(R.id.tvHeartRate)
             heartRateTextView.text = "$heartRate BPM"
         })
+
+        // 서버에서 심박수 정보를 가져와 그래프 업데이트
+        fetchHeartInfo()
+    }
+
+    private fun fetchHeartInfo() {
+        val email = viewModel.userEmail.value
+        if (!email.isNullOrEmpty()) {
+            apiService.getHeartInfo(email).enqueue(object : Callback<HeartInfo> {
+                override fun onResponse(call: Call<HeartInfo>, response: Response<HeartInfo>) {
+                    if (response.isSuccessful) {
+                        response.body()?.let { heartInfo ->
+                            updateHeartRateChart(heartInfo.periodicData.daily)
+                        }
+                    } else {
+                        Log.e("HomeFragment", "Failed to get heart info: ${response.errorBody()?.string()}")
+                        Toast.makeText(requireContext(), "Failed to get heart info", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<HeartInfo>, t: Throwable) {
+                    Log.e("HomeFragment", "Failed to get heart info", t)
+                    Toast.makeText(requireContext(), "Failed to connect to server", Toast.LENGTH_SHORT).show()
+                }
+            })
+        } else {
+            Log.e("HomeFragment", "Email is null or empty")
+            Toast.makeText(requireContext(), "Invalid email", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun updateHeartRateChart(dailyData: List<HeartDataPoint>) {
+        val entries = dailyData.mapIndexed { index, heartDataPoint ->
+            Entry(index.toFloat(), heartDataPoint.values.toFloat())
+        }
+
+        val lineDataSet = LineDataSet(entries, "Daily Heart Rate")
+        lineDataSet.color = requireContext().getColor(R.color.purple_200)
+        lineDataSet.valueTextColor = requireContext().getColor(R.color.black)
+
+        val lineData = LineData(lineDataSet)
+        heartRateChart.data = lineData
+
+        val xAxis = heartRateChart.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.granularity = 1f
+        xAxis.setDrawGridLines(false)
+
+        heartRateChart.axisRight.isEnabled = false
+        heartRateChart.description.isEnabled = false
+        heartRateChart.invalidate() // 차트 갱신
     }
 
     override fun onDestroyView() {
