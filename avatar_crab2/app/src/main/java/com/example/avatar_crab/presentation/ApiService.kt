@@ -6,11 +6,13 @@ import com.example.avatar_crab.data.exercise.SegmentDataEntity
 import com.example.avatar_crab.presentation.data.HeartInfo
 import com.example.avatar_crab.presentation.data.MapPolygonData
 import com.example.avatar_crab.presentation.data.UserInfo
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -61,11 +63,12 @@ interface ApiService {
     fun updatePolygonData(@Body polygonData: MapPolygonData): Call<ResponseBody>
 
     // 폴리곤 데이터 삭제 (DELETE)
-    @DELETE("/mapinfo")
+    @HTTP(method = "DELETE", path = "/mapinfo", hasBody = true)
     fun deletePolygonData(
-        @Query("email") email: String,
-        @Query("title") title: String
+        @Body requestBody: RequestBody
     ): Call<ResponseBody>
+
+
 
     // 심박수 정보 조회 (GET)
     @GET("/heartinfo")

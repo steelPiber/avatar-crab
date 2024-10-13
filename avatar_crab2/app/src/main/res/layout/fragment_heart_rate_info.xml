@@ -1,40 +1,231 @@
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:paddingBottom="32dp"
+    android:fitsSystemWindows="true">
 
-    <TextView
-        android:id="@+id/tvHeartRateTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Heart Rate Information"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/heartRateImage"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/ic_heart"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/tvHeartRateTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <!-- 애플 스타일 상단 네비게이션 바 -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/navigationBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:padding="16dp"
+            android:elevation="4dp">
 
-    <TextView
-        android:id="@+id/tvCurrentHeartRate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Current Heart Rate: 75 BPM"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/heartRateImage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <ImageView
+                android:id="@+id/backButton"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_arrow_back"
+                android:contentDescription="뒤로가기"
+                android:layout_gravity="start"
+                android:padding="8dp"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/navigationTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="심박수 정보"
+                android:textSize="20sp"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:layout_gravity="center"/>
+        </androidx.appcompat.widget.Toolbar>
+
+        <!-- 1행 : 휴식, 활동, 운동 카드뷰 -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/restCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/activityCard"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/navigationBar">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/heartIconRest"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="휴식 심박수 아이콘"
+                    android:src="@drawable/ic_rest"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvRestHeartRate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="65 BPM"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/heartIconRest"
+                    app:layout_constraintTop_toTopOf="@id/heartIconRest" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/activityCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/exerciseCard"
+            app:layout_constraintStart_toEndOf="@id/restCard"
+            app:layout_constraintTop_toBottomOf="@id/navigationBar">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/heartIconActivity"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="활동 심박수 아이콘"
+                    android:src="@drawable/ic_normal"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvActivityHeartRate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="85 BPM"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/heartIconActivity"
+                    app:layout_constraintTop_toTopOf="@id/heartIconActivity" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/exerciseCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/activityCard"
+            app:layout_constraintTop_toBottomOf="@id/navigationBar">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/heartIconExercise"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="운동 심박수 아이콘"
+                    android:src="@drawable/ic_exercise"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvExerciseHeartRate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="110 BPM"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/heartIconExercise"
+                    app:layout_constraintTop_toTopOf="@id/heartIconExercise" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 2행 : 그래프 표시 (탭 형식) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/graphCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/restCard">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <!-- 상단에 심박수 정보 표시 -->
+                <TextView
+                    android:id="@+id/heartRateInfoTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text=""
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- 탭 레이아웃 -->
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/heartRateTabLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:tabMode="fixed"
+                    app:tabGravity="fill"
+                    app:tabIndicatorColor="@color/red"
+                    app:tabTextColor="@color/black"
+                    app:tabSelectedTextColor="@color/red"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/heartRateInfoTextView" />
+
+                <!-- 그래프 -->
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/heartRateChart"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/heartRateTabLayout"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 맨 하단에 보이지 않는 얇은 박스 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toBottomOf="@+id/graphCard"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

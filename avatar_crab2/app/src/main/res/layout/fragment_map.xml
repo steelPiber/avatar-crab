@@ -10,12 +10,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- 내 위치 버튼 -->
+    <Button
+        android:id="@+id/btn_my_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|left"
+        android:layout_margin="16dp"
+        android:background="@drawable/round_button_background"
+        android:text="내 위치" />
+
     <!-- 영역 추가 버튼 -->
     <Button
         android:id="@+id/btn_add_area"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="영역 추가"
+        android:text="연어 추가"
         android:layout_gravity="top|end"
         android:layout_margin="16dp"
         android:background="@drawable/round_button_background" />
@@ -25,12 +35,12 @@
         android:id="@+id/instruction_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="건물 영역을 그려주세요"
+        android:text="건물 연어를 그려주세요"
         android:textColor="@android:color/white"
         android:background="#80000000"
         android:padding="8dp"
         android:layout_gravity="top|center_horizontal"
-        android:visibility="gone" /> <!-- 처음에는 숨김 상태 -->
+        android:visibility="gone" />
 
     <!-- 저장 버튼 -->
     <Button
@@ -39,8 +49,8 @@
         android:layout_height="wrap_content"
         android:text="저장"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="16dp"
-        android:visibility="gone" /> <!-- 처음에는 숨김 상태 -->
+        android:layout_marginBottom="72dp"
+        android:visibility="gone" />
 
     <!-- BottomSheet 부분 -->
     <FrameLayout

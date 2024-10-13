@@ -5,15 +5,32 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- 제목 입력 필드 -->
-    <EditText
-        android:id="@+id/et_area_title"
+    <!-- 제목 입력 필드 및 삭제 버튼을 포함한 수평 레이아웃 -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="제목을 입력하세요"
-        android:inputType="text"
-        android:padding="8dp"
-        android:background="@android:drawable/editbox_background" />
+        android:orientation="horizontal">
+
+        <!-- 제목 입력 필드 -->
+        <EditText
+            android:id="@+id/et_area_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="제목을 입력하세요"
+            android:inputType="text"
+            android:padding="8dp"
+            android:background="@android:drawable/editbox_background" />
+
+        <!-- 삭제 버튼 -->
+        <Button
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="삭제"
+            android:layout_marginStart="8dp"
+            android:onClick="onDeleteButtonClick" />
+    </LinearLayout>
 
     <!-- 간단한 그래프를 표시할 LineChart -->
     <com.github.mikephil.charting.charts.LineChart

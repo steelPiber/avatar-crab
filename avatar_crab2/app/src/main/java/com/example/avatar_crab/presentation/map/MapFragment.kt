@@ -26,7 +26,10 @@ import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.PolygonOverlay
 import com.naver.maps.map.util.FusedLocationSource
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,6 +41,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var naverMap: NaverMap
     private lateinit var saveButton: Button
     private lateinit var addAreaButton: Button
+    private lateinit var myLocationButton: Button
+    private lateinit var deleteButton: Button
     private lateinit var instructionTextView: TextView
     private var polygonPoints: MutableList<LatLng> = mutableListOf()
     private var polygons: MutableList<PolygonOverlay> = mutableListOf()
@@ -62,11 +67,22 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         saveButton = view.findViewById(R.id.btn_save_polygon)
         saveButton.visibility = View.GONE
         addAreaButton = view.findViewById(R.id.btn_add_area)
+        myLocationButton = view.findViewById(R.id.btn_my_location)
+        deleteButton = view.findViewById(R.id.btn_delete)
         instructionTextView = view.findViewById(R.id.instruction_text)
 
         // 영역 추가 버튼 클릭 시 폴리곤 그리기 시작
         addAreaButton.setOnClickListener {
             startPolygonDrawing()
+        }
+        // 내 위치 버튼 클릭 시 내 위치로 이동
+        myLocationButton.setOnClickListener {
+            moveToMyLocation()
+        }
+        // 삭제 버튼 클릭 시 폴리곤 삭제
+        deleteButton.setOnClickListener {
+            Log.d("MapFragment", "삭제 버튼 클릭됨")
+            onDeleteButtonClick(it)
         }
 
         // 위치 소스 초기화
@@ -134,6 +150,90 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    private fun moveToMyLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val location = fusedLocationSource.lastLocation
+            if (location != null) {
+                val myLocation = LatLng(location.latitude, location.longitude)
+                naverMap.moveCamera(CameraUpdate.scrollTo(myLocation))
+                naverMap.locationTrackingMode = LocationTrackingMode.Follow
+                Toast.makeText(requireContext(), "내 위치로 이동합니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "현재 위치를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    private fun onDeleteButtonClick(view: View) {
+        Log.d("MapFragment", "onDeleteButtonClick 호출됨")
+        val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(requireContext())
+        val email = account?.email ?: run {
+            Toast.makeText(requireContext(), "사용자 이메일을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val editText = view.rootView.findViewById<EditText>(R.id.et_area_title)
+        val title = editText?.text.toString()
+        if (title.isNotBlank()) {
+            Log.d("MapFragment", "폴리곤 삭제 시도 중: $title")
+            deletePolygon(email, title)
+            reloadMapFragment()
+            loadPolygonDataFromServer()
+        } else {
+            Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun deletePolygon(email: String, title: String) {
+        Log.d("MapFragment", "deletePolygon 호출됨: 이메일 = $email, 제목 = $title")
+        val jsonObject = JSONObject().apply {
+            put("email", email)
+            put("title", title)
+        }
+        val requestBody = jsonObject.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+
+        val call = RetrofitClient.heartRateInstance.deletePolygonData(requestBody)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    Log.d("MapFragment", "폴리곤 삭제 성공")
+                    Toast.makeText(requireContext(), "폴리곤이 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+
+                    // 삭제 후 폴리곤 데이터 다시 불러오기
+                    loadPolygonDataFromServer()
+                } else {
+                    Log.e("MapFragment", "폴리곤 삭제 실패: ${response.message()}")
+                    Toast.makeText(requireContext(), "폴리곤 삭제 실패: ${response.message()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.e("MapFragment", "서버 통신 실패: ${t.message}")
+                Toast.makeText(requireContext(), "서버 통신 실패: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
+
+    private fun reloadMapFragment() {
+        Log.d("MapFragment", "MapFragment 다시 로딩 중")
+        parentFragmentManager.beginTransaction().detach(this).attach(this).commit()
+    }
+
     private fun loadPolygonDataFromServer() {
         val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(requireContext())
         val email = account?.email ?: run {
@@ -148,6 +248,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 response: Response<List<MapPolygonData>>
             ) {
                 if (response.isSuccessful) {
+                    Log.d("MapFragment", "폴리곤 데이터 로드 성공")
                     response.body()?.let { polygonDataList ->
                         for (polygonData in polygonDataList) {
                             val points = parseCoordinates(polygonData.coordinates)
@@ -174,14 +275,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         }
                     }
                 } else {
+                    Log.e("MapFragment", "폴리곤 데이터 로드 실패: ${response.message()}")
                     Toast.makeText(requireContext(), "폴리곤 데이터 로드 실패: ${response.message()}", Toast.LENGTH_SHORT).show()
-                    Log.e("MapFragment", "Server Error: ${response.code()} ${response.errorBody()?.string()}")
                 }
             }
 
             override fun onFailure(call: Call<List<MapPolygonData>>, t: Throwable) {
+                Log.e("MapFragment", "서버 통신 실패: ${t.message}")
                 Toast.makeText(requireContext(), "서버 통신 실패: ${t.message}", Toast.LENGTH_SHORT).show()
-                Log.e("MapFragment", "Network Failure: ${t.message}", t)
             }
         })
     }
@@ -189,7 +290,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private fun parseCoordinates(coordinates: String): List<LatLng> {
         // JSON 형식의 문자열을 파싱하여 LatLng 리스트로 변환
         // 예: [{"lat":37.566, "lng":126.9784}, ...]
-        val regex = Regex("\\{\"lat\":(.*?), \"lng\":(.*?)\\}")
+        val regex = Regex("""\{"lat":(.*?), "lng":(.*?)\}"""
+        )
         return regex.findAll(coordinates).map {
             LatLng(it.groupValues[1].toDouble(), it.groupValues[2].toDouble())
         }.toList()
@@ -245,11 +347,28 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         val etTitle = view.findViewById<EditText>(R.id.et_area_title)
         val btnSave = view.findViewById<Button>(R.id.btn_save)
+        val btnDelete = view.findViewById<Button>(R.id.btn_delete)
 
         btnSave.setOnClickListener {
             val title = etTitle.text.toString()
             if (title.isNotBlank()) {
                 savePolygon(title)
+                reloadMapFragment()
+                bottomSheetDialog.dismiss()
+            } else {
+                Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        btnDelete.setOnClickListener {
+            val title = etTitle.text.toString()
+            if (title.isNotBlank()) {
+                val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(requireContext())
+                val email = account?.email ?: run {
+                    Toast.makeText(requireContext(), "사용자 이메일을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                deletePolygon(email, title)
                 bottomSheetDialog.dismiss()
             } else {
                 Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
@@ -280,22 +399,23 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         val coordinatesJson = polygonPoints.joinToString(prefix = "[", postfix = "]") { "{\"lat\":${it.latitude}, \"lng\":${it.longitude}}" }
         val polygonData = MapPolygonData(email = email, title = title, coordinates = coordinatesJson)
-        Log.d("MapFragment", "Polygon Data to send: $coordinatesJson")
+        Log.d("MapFragment", "전송할 폴리곤 데이터: $coordinatesJson")
 
         val call = RetrofitClient.heartRateInstance.sendPolygonData(polygonData)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
+                    Log.d("MapFragment", "폴리곤 데이터 저장 성공")
                     Toast.makeText(requireContext(), "폴리곤 데이터가 서버에 저장되었습니다.", Toast.LENGTH_SHORT).show()
                 } else {
+                    Log.e("MapFragment", "폴리곤 데이터 저장 실패: ${response.message()}")
                     Toast.makeText(requireContext(), "서버 저장 실패: ${response.message()}", Toast.LENGTH_SHORT).show()
-                    Log.e("MapFragment", "Server Error: ${response.code()} ${response.errorBody()?.string()}")
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.e("MapFragment", "서버 통신 실패: ${t.message}")
                 Toast.makeText(requireContext(), "서버 통신 실패: ${t.message}", Toast.LENGTH_SHORT).show()
-                Log.e("MapFragment", "Network Failure: ${t.message}", t)
             }
         })
 
@@ -319,6 +439,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         etTitle.setText(marker.captionText)
 
         val btnSave = view.findViewById<Button>(R.id.btn_save)
+        val btnDelete = view.findViewById<Button>(R.id.btn_delete)
+
         btnSave.setOnClickListener {
             val newTitle = etTitle.text.toString()
             if (newTitle.isNotBlank()) {
@@ -326,6 +448,21 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 bottomSheetDialog.dismiss()
             } else {
                 Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        btnDelete.setOnClickListener {
+            val newTitle = etTitle.text.toString()
+            if (newTitle.isNotBlank()) {
+                val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(requireContext())
+                val email = account?.email ?: run {
+                    Toast.makeText(requireContext(), "사용자 이메일을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                deletePolygon(email, newTitle)
+                bottomSheetDialog.dismiss()
+            } else {
+                Toast.makeText(requireContext(), "삭제할 제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
 

@@ -1,9 +1,15 @@
+
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Avatar_crab" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <!-- 기본 앱 테마를 MaterialComponents 기반으로 설정 -->
+    <style name="Base.Theme.Avatar_crab" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- 필요한 추가 속성들 -->
+        <item name="colorPrimary">@android:color/white</item> <!-- 툴바가 하얀색이 되도록 설정 -->
+        <item name="colorPrimaryVariant">@android:color/white</item>
+        <item name="colorOnPrimary">@android:color/black</item> <!-- 텍스트 색상을 검정으로 설정 -->
+        <item name="android:statusBarColor">@android:color/transparent</item> <!-- 상태바를 투명하게 설정 -->
+        <item name="android:navigationBarColor">@android:color/transparent</item> <!-- 내비게이션 바를 투명하게 설정 -->
     </style>
 
+    <!-- 실제 테마 -->
     <style name="Theme.Avatar_crab" parent="Base.Theme.Avatar_crab" />
 </resources>

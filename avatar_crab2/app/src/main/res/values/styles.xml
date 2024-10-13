@@ -1,0 +1,17 @@
+<resources>
+    <!-- Material Components 기반 테마 -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@android:color/white</item> <!-- 툴바 배경 흰색 설정 -->
+        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
+        <item name="colorOnPrimary">@android:color/black</item> <!-- 툴바 텍스트 검정색 설정 -->
+    </style>
+
+
+    <!-- AppCompat 기반 테마 (NoActionBar) -->
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+</resources>
