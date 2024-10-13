@@ -22,4 +22,9 @@
     <string name="summary_icon">summary_icon\n</string>
     <string name="stress_image">stress\n</string>
     <string name="heart_icon">heart\n</string>
+    <string name="checking_server_status">서버 상태 확인 중...</string>
+    <string name="server_db_running">서버와 데이터베이스가 정상적으로 실행 중입니다.</string>
+    <string name="server_db_issue">서버 또는 데이터베이스 상태에 문제가 있습니다.</string>
+    <string name="server_response_error">서버 응답 오류</string>
+    <string name="server_request_failed">서버 요청 실패</string>
 </resources>

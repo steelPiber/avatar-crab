@@ -44,13 +44,19 @@
 
         <!-- MainActivity를 앱의 시작 액티비티로 설정 -->
         <activity
-            android:name=".presentation.MainActivity"
-            android:exported="true">
+            android:name=".presentation.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <activity
+            android:name=".presentation.MainActivity"
+            android:exported="true" />
 
         <activity
             android:name=".presentation.LoginActivity"

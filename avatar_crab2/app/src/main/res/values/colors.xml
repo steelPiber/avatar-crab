@@ -2,7 +2,7 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="purple_200">#CE93D8</color>
-    <color name="primary">#6200EE</color>
+    <color name="primary">#3F51B5</color>
     <color name="primary_variant">#3700B3</color>
     <color name="secondary">#03DAC6</color>
     <color name="secondary_variant">#018786</color>
@@ -20,7 +20,7 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="border_color">#DDDDDD</color>
-
+    <color name="red">#FF6666</color>
     <color name="zone1">#FFCDD2</color>
     <color name="zone2">#F8BBD0</color>
     <color name="zone3">#E1BEE7</color>
@@ -29,4 +29,8 @@
 
 
     <color name="teal_200">#FF03DAC5</color>
+
+    <color name="primary_dark">#303F9F</color>
+    <color name="light_gray">#D3D3D3</color>
+
 </resources>

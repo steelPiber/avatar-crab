@@ -1,5 +1,6 @@
 package com.example.avatar_crab.presentation
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -30,9 +31,11 @@ import com.example.avatar_crab.presentation.map.MapFragment
 import com.example.avatar_crab.presentation.data.UserInfo
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -60,10 +63,11 @@ class HomeFragment : Fragment() {
     private lateinit var scrollView: NestedScrollView
     private val apiService by lazy { RetrofitClient.heartRateInstance }
 
-    private val signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        handleSignInResult(task)
-    }
+    private val signInLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            handleSignInResult(task)
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -96,7 +100,8 @@ class HomeFragment : Fragment() {
         userCard.setOnClickListener {
             // ViewModel에서 사용자 이메일을 가져옴
             val email = viewModel.userEmail.value
-            val profileImageUrl = viewModel.userAccount.value?.photoUrl?.toString() // 구글 프로필 이미지 URL 가져오기
+            val profileImageUrl =
+                viewModel.userAccount.value?.photoUrl?.toString() // 구글 프로필 이미지 URL 가져오기
 
             if (email != null) {
                 // 서버에서 사용자 정보를 가져오는 메서드 호출
@@ -147,21 +152,42 @@ class HomeFragment : Fragment() {
                 override fun onResponse(call: Call<HeartInfo>, response: Response<HeartInfo>) {
                     if (response.isSuccessful) {
                         val heartInfo = response.body()
-                        if (heartInfo != null && heartInfo.periodicData != null) {
+                        Log.d("HomeFragment", "Heart info response: $heartInfo")
+                        if (heartInfo?.periodicData?.daily != null && heartInfo.periodicData.daily.isNotEmpty()) {
                             updateHeartRateChart(heartInfo.periodicData.daily)
                         } else {
-                            Log.e("HomeFragment", "Heart info or periodic data is null")
-                            Toast.makeText(requireContext(), "Heart info or periodic data is not available", Toast.LENGTH_SHORT).show()
+                            Log.e(
+                                "HomeFragment",
+                                "Heart info or periodic data is null or empty: periodicData=\${heartInfo?.periodicData}"
+                            )
+                            Toast.makeText(
+                                requireContext(),
+                                "Daily heart rate data is not available",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            heartRateChart.clear()
+                            heartRateChart.invalidate() // 차트 갱신
                         }
                     } else {
-                        Log.e("HomeFragment", "Failed to get heart info: ${response.errorBody()?.string()}")
-                        Toast.makeText(requireContext(), "Failed to get heart info", Toast.LENGTH_SHORT).show()
+                        Log.e(
+                            "HomeFragment",
+                            "Failed to get heart info: \${response.errorBody()?.string()}"
+                        )
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to get heart info",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
                 override fun onFailure(call: Call<HeartInfo>, t: Throwable) {
                     Log.e("HomeFragment", "Failed to get heart info", t)
-                    Toast.makeText(requireContext(), "Failed to connect to server", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Failed to connect to server",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             })
         } else {
@@ -170,7 +196,19 @@ class HomeFragment : Fragment() {
         }
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun updateHeartRateChart(dailyData: List<HeartDataPoint>) {
+        if (dailyData.isEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                "No daily heart rate data available",
+                Toast.LENGTH_SHORT
+            ).show()
+            heartRateChart.clear()
+            heartRateChart.invalidate()
+            return
+        }
+
         val entries = dailyData.mapIndexed { index, heartDataPoint ->
             Entry(index.toFloat(), heartDataPoint.values.toFloat())
         }
@@ -178,6 +216,13 @@ class HomeFragment : Fragment() {
         val lineDataSet = LineDataSet(entries, "Daily Heart Rate")
         lineDataSet.color = requireContext().getColor(R.color.purple_200)
         lineDataSet.valueTextColor = requireContext().getColor(R.color.black)
+        lineDataSet.setDrawCircles(true)
+        lineDataSet.circleRadius = 6f
+        lineDataSet.setCircleColor(requireContext().getColor(R.color.purple_200))
+        lineDataSet.lineWidth = 3f
+        lineDataSet.valueTextSize = 12f
+        lineDataSet.setDrawFilled(true)
+        lineDataSet.fillDrawable = requireContext().getDrawable(R.drawable.chart_fill_gradient)
 
         val lineData = LineData(lineDataSet)
         heartRateChart.data = lineData
@@ -186,14 +231,37 @@ class HomeFragment : Fragment() {
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.granularity = 1f
         xAxis.setDrawGridLines(false)
+        xAxis.valueFormatter = object : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String {
+                val index = value.toInt()
+                return if (index in dailyData.indices) {
+                    val label = dailyData[index].label
+                    // Extract hour from label (assuming format "yyyy-MM-dd HH:mm")
+                    label.split(" ")[1].split(":")[0] + "시"
+                } else ""
+            }
+        }
 
         heartRateChart.axisRight.isEnabled = false
+        val leftAxis = heartRateChart.axisLeft
+        leftAxis.granularity = 10f
+        leftAxis.setDrawGridLines(true)
+        leftAxis.gridColor = requireContext().getColor(R.color.light_gray)
+        leftAxis.textColor = requireContext().getColor(R.color.black)
+        leftAxis.textSize = 12f
+
         heartRateChart.description.isEnabled = false
+        heartRateChart.setTouchEnabled(true)
+        heartRateChart.setPinchZoom(true)
+        heartRateChart.setScaleEnabled(true)
+        heartRateChart.setExtraOffsets(10f, 10f, 10f, 10f)
+        heartRateChart.animateX(1500)
         heartRateChart.invalidate() // 차트 갱신
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+
 
         // 다른 프래그먼트로 이동할 때 하단 네비게이션 바 다시 보이도록 설정
         requireActivity().window.decorView.systemUiVisibility = (

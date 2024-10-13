@@ -72,6 +72,6 @@ interface ApiService {
     fun getHeartInfo(@Query("email") email: String): Call<HeartInfo>
     //서버 정보 조회 (GET)
     @GET("/status")
-    fun serverCheck(): Call<ServerResponseFragment.ServerStatusResponse>
+    fun serverCheck(): Call<SplashActivity.ServerStatusResponse>
 
 }

@@ -1,11 +1,12 @@
-// HeartInfo 데이터 클래스 정의
 package com.example.avatar_crab.presentation.data
+
+import com.google.gson.annotations.SerializedName
 
 data class HeartInfo(
     val rest: HeartRateRange,
     val active: HeartRateRange,
     val exercise: HeartRateRange,
-    val periodicData: PeriodicHeartData
+    @SerializedName("periodic_data") val periodicData: PeriodicHeartData? // JSON의 periodic_data를 매핑합니다.
 )
 
 data class HeartRateRange(
@@ -17,7 +18,7 @@ data class PeriodicHeartData(
     val daily: List<HeartDataPoint>,
     val weekly: List<HeartDataPoint>,
     val monthly: List<HeartDataPoint>,
-    val sixMonths: List<HeartDataPoint>,
+    @SerializedName("six_months") val sixMonths: List<HeartDataPoint>, // JSON의 six_months를 매핑합니다.
     val yearly: List<HeartDataPoint>
 )
 
