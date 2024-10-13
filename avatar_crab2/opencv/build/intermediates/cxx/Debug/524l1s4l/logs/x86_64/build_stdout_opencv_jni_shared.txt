@@ -1,3 +1,2 @@
 ninja: Entering directory `/home/alan/AndroidStudioProjects/AndroidStudioProjects (7)/git-avatr_crab/avatar_crab2/opencv/.cxx/Debug/524l1s4l/x86_64'
-[1/2] Building CXX object CMakeFiles/opencv_jni_shared.dir/dummy.cpp.o
-[2/2] Linking CXX static library libopencv_jni_shared.a
+ninja: no work to do.

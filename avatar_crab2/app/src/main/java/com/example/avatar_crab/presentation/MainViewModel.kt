@@ -231,13 +231,13 @@ class MainViewModel(
                 .addOnSuccessListener { location: Location? ->
                     if (location != null) {
                         currentLocation = location
-                        Log.d("MainActivity", "위치 가져오기 성공: ${location.latitude}, ${location.longitude}")
+                        Log.d("com.example.avatar_crab.presentation.MainActivity", "위치 가져오기 성공: ${location.latitude}, ${location.longitude}")
                     } else {
-                        Log.e("MainActivity", "위치 정보를 가져올 수 없습니다.")
+                        Log.e("com.example.avatar_crab.presentation.MainActivity", "위치 정보를 가져올 수 없습니다.")
                     }
                 }
                 .addOnFailureListener {
-                    Log.e("MainActivity", "위치 가져오기 실패", it)
+                    Log.e("com.example.avatar_crab.presentation.MainActivity", "위치 가져오기 실패", it)
                 }
         }
         return currentLocation

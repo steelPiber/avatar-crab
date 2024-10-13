@@ -1,6 +1,6 @@
 package com.example.avatar_crab.presentation.userinfo
 
-import MainActivity
+import com.example.avatar_crab.presentation.MainActivity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button

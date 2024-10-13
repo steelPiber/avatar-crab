@@ -1,3 +1,5 @@
+package com.example.avatar_crab.presentation
+
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
@@ -17,11 +19,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.avatar_crab.MyApplication
 import com.example.avatar_crab.R
-import com.example.avatar_crab.presentation.HomeFragment
-import com.example.avatar_crab.presentation.LoginActivity
-import com.example.avatar_crab.presentation.MainViewModel
-import com.example.avatar_crab.presentation.MainViewModelFactory
-import com.example.avatar_crab.presentation.RetrofitClient
 import com.example.avatar_crab.presentation.monitor.HeartRateMonitor
 import com.example.avatar_crab.presentation.userinfo.UserInfoActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -66,7 +63,7 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         val sharedPreferences = getSharedPreferences("AvatarCrabPrefs", Context.MODE_PRIVATE)
         val userInfoJson = sharedPreferences.getString("userInfo", null)
 
-        Log.d("MainActivity", "userInfoJson: $userInfoJson") // 로그로 userInfoJson 값 확인
+        Log.d("com.example.avatar_crab.presentation.MainActivity", "userInfoJson: $userInfoJson") // 로그로 userInfoJson 값 확인
 
         // HeartRateMonitor 초기화
         heartRateMonitor = HeartRateMonitor(this)
@@ -92,7 +89,7 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         // 이미 로그인된 계정이 있는지 확인
         val account = GoogleSignIn.getLastSignedInAccount(this)
 
-        Log.d("MainActivity", "GoogleSignIn account: $account") // 로그로 GoogleSignIn 상태 확인
+        Log.d("com.example.avatar_crab.presentation.MainActivity", "GoogleSignIn account: $account") // 로그로 GoogleSignIn 상태 확인
 
         if (account != null) {
             // 로그인된 계정이 있으면 ViewModel에 계정 정보 설정
@@ -138,7 +135,7 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
                 }
             }
         } catch (e: ApiException) {
-            Log.w("MainActivity", "signInResult:failed code=" + e.statusCode)
+            Log.w("com.example.avatar_crab.presentation.MainActivity", "signInResult:failed code=" + e.statusCode)
             Toast.makeText(this, "Google 로그인 실패: ${e.statusCode}, ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
         }
     }
@@ -198,7 +195,7 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
     private fun navigateToLogin() {
         val loginIntent = Intent(this, LoginActivity::class.java)
         startActivity(loginIntent)
-        finish() // MainActivity 종료
+        finish() // com.example.avatar_crab.presentation.MainActivity 종료
     }
 
     // 현재 위치 정보를 얻는 메서드
@@ -229,11 +226,11 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
                         val date = dateFormat.parse(timestampString)
                         date?.time
                     } catch (e: Exception) {
-                        Log.e("MainActivity", "Failed to parse timestamp: $timestampString", e)
+                        Log.e("com.example.avatar_crab.presentation.MainActivity", "Failed to parse timestamp: $timestampString", e)
                         null
                     }
 
-                    Log.d("MainActivity", "데이터 수신: $bpm BPM, 태그: $tag at $timestamp")
+                    Log.d("com.example.avatar_crab.presentation.MainActivity", "데이터 수신: $bpm BPM, 태그: $tag at $timestamp")
 
                     if (timestamp != null && bpm != null && tag != null) {
                         viewModel.addHeartRateDataToBuffer(bpm, tag, timestamp)

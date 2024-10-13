@@ -1,4 +1,4 @@
-/Users/yong/Library/Android/sdk/cmake/3.22.1/bin/ninja \
+/home/alan/Android/Sdk/cmake/3.22.1/bin/ninja \
   -C \
-  /Users/yong/avatar-crab/avatar_crab2/opencv/.cxx/Debug/524l1s4l/arm64-v8a \
+  "/home/alan/AndroidStudioProjects/AndroidStudioProjects (7)/git-avatr_crab/avatar_crab2/opencv/.cxx/Debug/524l1s4l/arm64-v8a" \
   opencv_jni_shared

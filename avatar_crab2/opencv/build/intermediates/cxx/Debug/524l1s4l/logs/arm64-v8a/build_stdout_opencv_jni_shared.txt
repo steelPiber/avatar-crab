@@ -1,2 +1,2 @@
-ninja: Entering directory `/Users/yong/avatar-crab/avatar_crab2/opencv/.cxx/Debug/524l1s4l/arm64-v8a'
+ninja: Entering directory `/home/alan/AndroidStudioProjects/AndroidStudioProjects (7)/git-avatr_crab/avatar_crab2/opencv/.cxx/Debug/524l1s4l/arm64-v8a'
 ninja: no work to do.

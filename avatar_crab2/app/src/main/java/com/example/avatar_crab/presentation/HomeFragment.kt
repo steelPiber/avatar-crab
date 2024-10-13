@@ -23,10 +23,16 @@ import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.example.avatar_crab.MyApplication
 import com.example.avatar_crab.R
+import com.example.avatar_crab.presentation.data.HeartDataPoint
+import com.example.avatar_crab.presentation.data.HeartInfo
 import com.example.avatar_crab.presentation.measure.MeasureFragment
 import com.example.avatar_crab.presentation.map.MapFragment
 import com.example.avatar_crab.presentation.data.UserInfo
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -52,7 +58,7 @@ class HomeFragment : Fragment() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var userCard: CardView
     private lateinit var scrollView: NestedScrollView
-    private val apiService by lazy { (requireActivity().application as MyApplication).apiService }
+    private val apiService by lazy { RetrofitClient.heartRateInstance }
 
     private val signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
@@ -140,8 +146,12 @@ class HomeFragment : Fragment() {
             apiService.getHeartInfo(email).enqueue(object : Callback<HeartInfo> {
                 override fun onResponse(call: Call<HeartInfo>, response: Response<HeartInfo>) {
                     if (response.isSuccessful) {
-                        response.body()?.let { heartInfo ->
+                        val heartInfo = response.body()
+                        if (heartInfo != null && heartInfo.periodicData != null) {
                             updateHeartRateChart(heartInfo.periodicData.daily)
+                        } else {
+                            Log.e("HomeFragment", "Heart info or periodic data is null")
+                            Toast.makeText(requireContext(), "Heart info or periodic data is not available", Toast.LENGTH_SHORT).show()
                         }
                     } else {
                         Log.e("HomeFragment", "Failed to get heart info: ${response.errorBody()?.string()}")
