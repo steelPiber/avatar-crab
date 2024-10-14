@@ -69,7 +69,6 @@ interface ApiService {
     ): Call<ResponseBody>
 
 
-
     // 심박수 정보 조회 (GET)
     @GET("/heartinfo")
     fun getHeartInfo(@Query("email") email: String): Call<HeartInfo>

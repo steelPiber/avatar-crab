@@ -130,8 +130,8 @@ class MainViewModel(
                             tag = data.tag,
                             timestamp = data.timestamp.toString(),
                             email = getEmailFromPreferences(),
-                            latitude = latitude?.toString(),
-                            longitude = longitude?.toString()
+                            latitude = latitude,
+                            longitude = longitude
                         )
                         sendHeartRateData(heartRateData)
                     }

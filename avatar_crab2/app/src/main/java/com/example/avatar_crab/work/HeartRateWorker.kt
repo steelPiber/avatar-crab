@@ -17,8 +17,8 @@ class HeartRateWorker(context: Context, workerParams: WorkerParameters) : Corout
         val tag = inputData.getString("tag")
         val timestamp = inputData.getString("timestamp")
         val email = inputData.getString("email")
-        val latitude = inputData.getString("latitude")  // 추가
-        val longitude = inputData.getString("longitude") // 추가
+        val latitude = inputData.getString("latitude")?.toDoubleOrNull()  // 추가
+        val longitude = inputData.getString("longitude")?.toDoubleOrNull() // 추가
 
         if (bpm == null || tag == null || timestamp == null || email == null) {
             Log.e("HeartRateWorker", "입력 데이터 누락")
