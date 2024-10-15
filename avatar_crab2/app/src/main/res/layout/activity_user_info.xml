@@ -3,14 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="@color/background_light">
+    android:background="@android:color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center"
-        android:padding="16dp">
+        android:gravity="center_horizontal"
+        android:padding="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
 
         <!-- 제목 -->
         <TextView
@@ -50,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/rounded_button"
+            android:backgroundTint="@android:color/holo_red_dark"
             android:padding="16dp"
             android:text="이메일 인증"
             android:textAllCaps="false"
@@ -82,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/rounded_button"
+            android:backgroundTint="@android:color/holo_red_dark"
             android:padding="16dp"
             android:text="전화번호 인증"
             android:textAllCaps="false"
@@ -208,7 +210,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="32dp"
-            android:background="@drawable/rounded_button"
+            android:backgroundTint="@android:color/holo_red_dark"
             android:padding="16dp"
             android:text="제출"
             android:textAllCaps="false"
