@@ -11,16 +11,21 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.avatar_crab.R
 import com.example.avatar_crab.presentation.RetrofitClient
 import com.example.avatar_crab.presentation.data.UserInfo
+import com.google.firebase.auth.FirebaseAuth
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class UserInfoActivity : AppCompatActivity() {
     private lateinit var email: String
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_info)
+
+        // FirebaseAuth 초기화
+        auth = FirebaseAuth.getInstance()
 
         // 이메일 정보를 Intent로부터 가져옴
         email = intent.getStringExtra("email") ?: ""
@@ -28,34 +33,40 @@ class UserInfoActivity : AppCompatActivity() {
         // 신체 정보 입력 폼 제출 시
         val submitButton = findViewById<Button>(R.id.submit_button)
         submitButton.setOnClickListener {
-            val name = findViewById<EditText>(R.id.name_input).text.toString()
-            val genderGroup = findViewById<RadioGroup>(R.id.gender_group)
-            val selectedGenderId = genderGroup.checkedRadioButtonId
-            val selectedGender = if (selectedGenderId == R.id.gender_male) "남자" else "여자"
+            val emailInput = findViewById<EditText>(R.id.email_input).text.toString()
+            val currentUser = auth.currentUser
 
-            // 나이, 키, 몸무게는 입력값이 없을 경우 예외 처리
-            val ageText = findViewById<EditText>(R.id.age_input).text.toString()
-            val heightText = findViewById<EditText>(R.id.height_input).text.toString()
-            val weightText = findViewById<EditText>(R.id.weight_input).text.toString()
-
-            if (name.isEmpty() || ageText.isEmpty() || heightText.isEmpty() || weightText.isEmpty()) {
-                Toast.makeText(this, "모든 정보를 입력해주세요", Toast.LENGTH_SHORT).show()
+            if (currentUser == null || currentUser.email != emailInput) {
+                Toast.makeText(this, "입력한 이메일과 현재 사용자 이메일이 일치하지 않습니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val age = ageText.toInt()
-            val height = heightText.toDouble()
-            val weight = weightText.toDouble()
-
-            val userInfo = UserInfo(email, name, selectedGender, age, height, weight)
-
-            // 서버에 신체 정보 전송
-            sendUserInfoToServer(userInfo)
+            saveUserInfo()
         }
     }
 
     // 서버에 신체 정보를 저장하는 함수
-    private fun sendUserInfoToServer(userInfo: UserInfo) {
+    private fun saveUserInfo() {
+        val name = findViewById<EditText>(R.id.name_input).text.toString()
+        val genderGroup = findViewById<RadioGroup>(R.id.gender_group)
+        val selectedGenderId = genderGroup.checkedRadioButtonId
+        val selectedGender = if (selectedGenderId == R.id.gender_male) "남자" else "여자"
+
+        val ageText = findViewById<EditText>(R.id.age_input).text.toString()
+        val heightText = findViewById<EditText>(R.id.height_input).text.toString()
+        val weightText = findViewById<EditText>(R.id.weight_input).text.toString()
+
+        if (name.isEmpty() || ageText.isEmpty() || heightText.isEmpty() || weightText.isEmpty()) {
+            Toast.makeText(this, "모든 정보를 입력해주세요", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val age = ageText.toInt()
+        val height = heightText.toDouble()
+        val weight = weightText.toDouble()
+
+        val userInfo = UserInfo(email, name, selectedGender, age, height, weight)
+
         RetrofitClient.heartRateInstance.sendUserInfo(userInfo).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {

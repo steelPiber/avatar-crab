@@ -1,207 +1,366 @@
-<androidx.core.widget.NestedScrollView
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scrollView"
+    android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:paddingBottom="100dp"
-    tools:context=".presentation.HomeFragment"
-    android:scrollbars="none"
-    android:overScrollMode="always">
+    android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:paddingBottom="100dp"
+        tools:context=".presentation.HomeFragment"
+        android:scrollbars="none"
+        android:overScrollMode="always">
 
-        <!-- 1행 왼쪽 카드뷰 : 프로필 카드 (아이콘만 표시) -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/userCard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            app:cardBackgroundColor="@android:color/white"
-            app:cardCornerRadius="50dp"
-            app:cardElevation="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/profileImageView"
-                android:layout_width="86dp"
-                android:layout_height="85dp"
-                android:contentDescription="프로필 이미지"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_default_profile"
-                app:circleCrop="true" />
-        </androidx.cardview.widget.CardView>
-
-        <!-- 2행 왼쪽 카드뷰 : 심박수 + 그래프 -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/heartRateCard"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            app:cardBackgroundColor="@android:color/white"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/userCard">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <!-- 상단 프로필 위에 공간 확보 -->
+            <View
+                android:id="@+id/topSpacer"
                 android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:background="@android:color/transparent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <!-- 1행 왼쪽 카드뷰 : 프로필 카드 (아이콘만 표시) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/userCard"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="0dp">
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="50dp"
+                app:cardElevation="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/topSpacer">
 
-
-                <!-- 심박수 아이콘 상단 오른쪽 -->
-
-                <!-- 심박수 값 상단 왼쪽 -->
-
-                <!-- LineChart for Heart Rate -->
                 <ImageView
-                    android:id="@+id/heartIcon"
-                    android:layout_width="30dp"
-                    android:layout_height="26dp"
-                    android:layout_marginEnd="352dp"
-                    android:contentDescription="@string/heart_image"
-                    android:src="@drawable/ic_heart"
-                    app:layout_constraintBottom_toTopOf="@+id/heartRateChart"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:id="@+id/profileImageView"
+                    android:layout_width="86dp"
+                    android:layout_height="85dp"
+                    android:contentDescription="프로필 이미지"
+                    android:scaleType="fitCenter"
 
-                <TextView
-                    android:id="@+id/tvHeartRate"
+                    android:src="@drawable/ic_default_profile"
+                    app:circleCrop="true" />
+            </androidx.cardview.widget.CardView>
+
+            <!-- 1행 오른쪽 카드뷰 : 워치 카드뷰 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/watchCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="50dp"
+                app:cardElevation="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/userCard"
+                app:layout_constraintBottom_toBottomOf="@id/userCard">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp">
+
+                    <ImageView
+                        android:id="@+id/watchImageView"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:contentDescription="워치 이미지"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_watch"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                    android:id="@+id/tvWatchStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="75 BPM"
+                    android:text="충전중"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toEndOf="@+id/heartIcon"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toEndOf="@id/watchImageView"
+                    app:layout_constraintTop_toTopOf="@id/watchImageView"
+                    android:layout_marginStart="8dp" />
 
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/heartRateChart"
-                    android:layout_width="0dp"
-                    android:layout_height="100dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvHeartRate" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:id="@+id/tvWatchPercentage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="85%"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toEndOf="@id/watchImageView"
+                        app:layout_constraintTop_toBottomOf="@id/tvWatchStatus"
+                        android:layout_marginStart="8dp" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
 
-        <!-- 2행 오른쪽 카드뷰 : 스트레스 + 그래프 -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/stressCard"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            app:cardBackgroundColor="@android:color/white"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/heartRateCard">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
+            <!-- 부제목: 요약 -->
+            <TextView
+                android:id="@+id/tvSummary"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="0dp">
+                android:text="요약"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/userCard" />
 
-                <!-- 스트레스 아이콘 상단 오른쪽 -->
-
-                <!-- 스트레스 값 상단 왼쪽 -->
-                <ImageView
-                    android:id="@+id/stressIcon"
-                    android:layout_width="38dp"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="336dp"
-                    android:contentDescription="@string/stress_image"
-                    android:src="@drawable/ic_stress"
-                    app:layout_constraintBottom_toTopOf="@+id/stressChart"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <TextView
-                    android:id="@+id/tvStress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="30%"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toEndOf="@+id/stressIcon"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <!-- LineChart for Stress -->
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/stressChart"
-                    android:layout_width="0dp"
-                    android:layout_height="100dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvStress" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- 3행 카드뷰 : 지도로 보기 -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/mapCard"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            app:cardBackgroundColor="@android:color/white"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/stressCard">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <!-- 부제목 위아래 공간 확보 -->
+            <View
+                android:id="@+id/summarySpacer"
                 android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:background="@android:color/transparent"
+                app:layout_constraintTop_toBottomOf="@id/tvSummary" />
+
+            <!-- 2행 왼쪽 카드뷰 : 심박수 + 그래프 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/heartRateCard"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/summarySpacer">
 
-                <!-- 지도 아이콘 상단 오른쪽 -->
-
-                <!-- 지도로 보기 텍스트 상단 왼쪽 -->
-                <ImageView
-                    android:id="@+id/mapIcon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginEnd="320dp"
-                    android:contentDescription="지도 아이콘"
-                    android:src="@drawable/ic_map"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tvMapText"
-                    android:layout_width="wrap_content"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="지도로 보기"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/mapIcon"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+                    android:padding="0dp">
 
-        <!-- 맨 하단 빈 카드뷰 -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/emptyCard"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
-            android:layout_margin="8dp"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/mapCard" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+                    <ImageView
+                        android:id="@+id/heartIcon"
+                        android:layout_width="30dp"
+                        android:layout_height="26dp"
+                        android:layout_marginEnd="352dp"
+                        android:contentDescription="@string/heart_image"
+                        android:src="@drawable/ic_heart"
+                        app:layout_constraintBottom_toTopOf="@+id/heartRateChart"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvHeartRate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="75 BPM"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@+id/heartIcon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/heartRateChart"
+                        android:layout_width="0dp"
+                        android:layout_height="100dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvHeartRate" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 2행 오른쪽 카드뷰 : 스트레스 + 그래프 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/stressCard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/heartRateCard">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="0dp">
+
+                    <ImageView
+                        android:id="@+id/stressIcon"
+                        android:layout_width="38dp"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="336dp"
+                        android:contentDescription="@string/stress_image"
+                        android:src="@drawable/ic_stress"
+                        app:layout_constraintBottom_toTopOf="@+id/stressChart"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <TextView
+                        android:id="@+id/tvStress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="30%"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@+id/stressIcon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/stressChart"
+                        android:layout_width="0dp"
+                        android:layout_height="100dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvStress" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 부제목: 정보 -->
+            <TextView
+                android:id="@+id/tvInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="정보"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/stressCard" />
+
+            <!-- 부제목 위아래 공간 확보 -->
+            <View
+                android:id="@+id/infoSpacer"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:background="@android:color/transparent"
+                app:layout_constraintTop_toBottomOf="@id/tvInfo" />
+
+            <!-- 3행 카드뷰 : 지도로 보기 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/mapCard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/infoSpacer">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:id="@+id/mapIcon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="320dp"
+                        android:contentDescription="지도 아이콘"
+                        android:src="@drawable/ic_map"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvMapText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="지도로 보기"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/mapIcon"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 부제목: 기사 -->
+            <TextView
+                android:id="@+id/tvArticle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="기사"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mapCard" />
+
+            <!-- 부제목 위아래 공간 확보 -->
+            <View
+                android:id="@+id/articleSpacer"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:background="@android:color/transparent"
+                app:layout_constraintTop_toBottomOf="@id/tvArticle" />
+
+            <!-- 4행 카드뷰 : 기사 내용 (큰 이미지 + 텍스트) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/articleCard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/articleSpacer">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:id="@+id/articleImage"
+                        android:layout_width="0dp"
+                        android:layout_height="200dp"
+                        android:layout_marginBottom="8dp"
+                        android:contentDescription="기사 이미지"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/run"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvArticleContent"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="심박수 관련 기사 내용이 여기에 들어갑니다. 심박수와 건강의 관계에 대한 중요한 정보를 제공합니다."
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/articleImage" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 맨 하단에 보이지 않는 얇은 박스 -->
+            <View
+                android:id="@+id/bottomSpacer"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@android:color/transparent"
+                app:layout_constraintTop_toBottomOf="@id/articleCard"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

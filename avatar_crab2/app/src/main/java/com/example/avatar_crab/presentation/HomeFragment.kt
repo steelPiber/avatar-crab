@@ -21,6 +21,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.example.avatar_crab.MyApplication
 import com.example.avatar_crab.R
@@ -61,6 +62,7 @@ class HomeFragment : Fragment() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var userCard: CardView
     private lateinit var scrollView: NestedScrollView
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private val apiService by lazy { RetrofitClient.heartRateInstance }
 
     private val signInLauncher =
@@ -85,6 +87,7 @@ class HomeFragment : Fragment() {
         stressChart = view.findViewById(R.id.stressChart)
         userCard = view.findViewById(R.id.userCard)
         scrollView = view.findViewById(R.id.scrollView)
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
 
         // Google Sign-In 설정 및 이벤트 처리
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -143,6 +146,12 @@ class HomeFragment : Fragment() {
 
         // 서버에서 심박수 정보를 가져와 그래프 업데이트
         fetchHeartInfo()
+
+        // SwipeRefreshLayout 설정
+        swipeRefreshLayout.setOnRefreshListener {
+            fetchHeartInfo() // 데이터 새로고침
+            swipeRefreshLayout.isRefreshing = false // 새로고침 완료 후 인디케이터 해제
+        }
     }
 
     private fun fetchHeartInfo() {
@@ -214,13 +223,8 @@ class HomeFragment : Fragment() {
         }
 
         val lineDataSet = LineDataSet(entries, "Daily Heart Rate")
-        lineDataSet.color = requireContext().getColor(R.color.purple_200)
-        lineDataSet.valueTextColor = requireContext().getColor(R.color.black)
-        lineDataSet.setDrawCircles(true)
-        lineDataSet.circleRadius = 6f
-        lineDataSet.setCircleColor(requireContext().getColor(R.color.purple_200))
-        lineDataSet.lineWidth = 3f
-        lineDataSet.valueTextSize = 12f
+        lineDataSet.setDrawCircles(false)
+        lineDataSet.setDrawValues(false)
         lineDataSet.setDrawFilled(true)
         lineDataSet.fillDrawable = requireContext().getDrawable(R.drawable.chart_fill_gradient)
 
@@ -261,7 +265,6 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-
 
         // 다른 프래그먼트로 이동할 때 하단 네비게이션 바 다시 보이도록 설정
         requireActivity().window.decorView.systemUiVisibility = (
