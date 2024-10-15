@@ -11,12 +11,16 @@ import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.example.avatar_crab.R
 import com.example.avatar_crab.presentation.data.UserInfo
 import androidx.fragment.app.activityViewModels
 import com.example.avatar_crab.MyApplication
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 class ProfileDialogFragment(private val userInfo: UserInfo, private val profileImageUrl: String?) : DialogFragment() {
 
@@ -27,6 +31,9 @@ class ProfileDialogFragment(private val userInfo: UserInfo, private val profileI
             requireActivity().application
         )
     }
+
+    // GoogleSignInClient를 사용하여 Google 로그아웃 처리
+    private lateinit var googleSignInClient: GoogleSignInClient
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,6 +52,12 @@ class ProfileDialogFragment(private val userInfo: UserInfo, private val profileI
         val radioFemale = view.findViewById<RadioButton>(R.id.radioFemale)
         val btnSave = view.findViewById<Button>(R.id.btnSave)
         val btnLogout = view.findViewById<Button>(R.id.btnLogout)
+
+        // GoogleSignInClient 초기화
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
 
         // 유저 정보 설정
         etName.setText(userInfo.name)
@@ -112,9 +125,18 @@ class ProfileDialogFragment(private val userInfo: UserInfo, private val profileI
     }
 
     private fun logoutUser() {
-        // LoginActivity로 이동
-        val intent = Intent(requireContext(), LoginActivity::class.java)
-        startActivity(intent)
-        dismiss() // 다이얼로그 닫기
+        // Google 로그아웃 처리
+        googleSignInClient.signOut().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                // Sign-out successful, proceed to LoginActivity
+                val intent = Intent(requireContext(), LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                dismiss() // 다이얼로그 닫기
+            } else {
+                // Handle failure if needed
+                Toast.makeText(requireContext(), "로그아웃 실패: ${task.exception?.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
