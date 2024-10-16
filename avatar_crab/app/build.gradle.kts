@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.avatar_crab"
+    namespace = "piber.avatar_crab"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.avatar_crab"
+        applicationId = "piber.avatar_crab"
         minSdk = 30
         targetSdk = 34
         versionCode = 1
@@ -40,7 +40,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
     packaging {
         resources {
@@ -74,7 +74,7 @@ dependencies {
     implementation("androidx.compose.material:material:1.6.7")
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.7")
     implementation("androidx.compose.ui:ui-tooling:1.6.7")
-    implementation("com.google.android.gms:play-services-wearable:18.1.0")
+    implementation("com.google.android.gms:play-services-wearable:18.2.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
     implementation("androidx.wear.compose:compose-material:1.3.1")
     implementation("androidx.wear.compose:compose-foundation:1.3.1")
