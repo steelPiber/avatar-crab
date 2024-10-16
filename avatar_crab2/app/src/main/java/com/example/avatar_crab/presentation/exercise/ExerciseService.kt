@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
-import com.example.avatar_crab.R
+import piber.avatar_crab.R
 import com.example.avatar_crab.data.AppDatabase
 import com.example.avatar_crab.data.challenge.ChallengeRepository
 import com.example.avatar_crab.presentation.MainViewModel

@@ -14,7 +14,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.example.avatar_crab.R
+import piber.avatar_crab.R
 import com.example.avatar_crab.data.exercise.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.maps.CameraUpdateFactory

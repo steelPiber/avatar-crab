@@ -6,7 +6,7 @@ import android.location.Location
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
-import com.example.avatar_crab.R
+import piber.avatar_crab.R
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory

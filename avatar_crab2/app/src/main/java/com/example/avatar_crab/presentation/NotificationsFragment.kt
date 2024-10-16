@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.avatar_crab.R
+import piber.avatar_crab.R
 
 class NotificationsFragment : Fragment() {
 

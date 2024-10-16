@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.avatar_crab.R
+import piber.avatar_crab.R
 import com.google.android.material.tabs.TabLayout
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.data.BarData

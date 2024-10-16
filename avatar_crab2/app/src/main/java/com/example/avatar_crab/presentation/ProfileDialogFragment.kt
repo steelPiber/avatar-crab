@@ -14,7 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
-import com.example.avatar_crab.R
+import piber.avatar_crab.R
 import com.example.avatar_crab.presentation.data.UserInfo
 import androidx.fragment.app.activityViewModels
 import com.example.avatar_crab.MyApplication

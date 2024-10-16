@@ -10,7 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.example.avatar_crab.R
+import piber.avatar_crab.R
 import com.example.avatar_crab.data.exercise.LatLngEntity
 import com.example.avatar_crab.data.exercise.SegmentDataEntity
 import com.github.mikephil.charting.charts.HorizontalBarChart

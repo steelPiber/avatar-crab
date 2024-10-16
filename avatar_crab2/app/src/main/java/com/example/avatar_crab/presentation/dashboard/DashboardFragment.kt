@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.avatar_crab.R
+import piber.avatar_crab.R
 import com.example.avatar_crab.data.ActivityData
 import com.example.avatar_crab.presentation.CustomMarkerView
 import com.example.avatar_crab.presentation.MainViewModel

@@ -24,7 +24,6 @@ import androidx.lifecycle.Observer
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.example.avatar_crab.MyApplication
-import com.example.avatar_crab.R
 import com.example.avatar_crab.presentation.data.HeartDataPoint
 import com.example.avatar_crab.presentation.data.HeartInfo
 import com.example.avatar_crab.presentation.measure.MeasureFragment
@@ -43,6 +42,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import piber.avatar_crab.R
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

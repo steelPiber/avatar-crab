@@ -2,11 +2,12 @@ package com.example.avatar_crab.presentation
 
 import android.content.Context
 import android.widget.TextView
-import com.example.avatar_crab.R
+
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
+import piber.avatar_crab.R
 
 class CustomMarkerView(context: Context, layoutResource: Int) : MarkerView(context, layoutResource) {
 

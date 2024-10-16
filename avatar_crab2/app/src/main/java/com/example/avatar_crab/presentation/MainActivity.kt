@@ -18,7 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.avatar_crab.MyApplication
-import com.example.avatar_crab.R
+import piber.avatar_crab.R
 import com.example.avatar_crab.presentation.monitor.HeartRateMonitor
 import com.example.avatar_crab.presentation.userinfo.UserInfoActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn

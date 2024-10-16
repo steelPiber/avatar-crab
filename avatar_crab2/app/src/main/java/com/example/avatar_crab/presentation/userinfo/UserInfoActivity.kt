@@ -8,10 +8,10 @@ import android.widget.EditText
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.avatar_crab.R
 import com.example.avatar_crab.presentation.RetrofitClient
 import com.example.avatar_crab.presentation.data.UserInfo
 import com.google.firebase.auth.FirebaseAuth
+import piber.avatar_crab.R
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

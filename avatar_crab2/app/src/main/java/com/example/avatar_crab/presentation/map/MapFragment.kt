@@ -14,7 +14,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.example.avatar_crab.R
+import piber.avatar_crab.R
 import com.example.avatar_crab.presentation.MainViewModel
 import com.example.avatar_crab.presentation.RetrofitClient
 import com.example.avatar_crab.presentation.data.MapPolygonData

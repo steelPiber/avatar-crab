@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.avatar_crab"
+    namespace = "piber.avatar_crab"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.avatar_crab"
+        applicationId = "piber.avatar_crab"
         minSdk = 30
         targetSdk = 34
         versionCode = 1

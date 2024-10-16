@@ -27,7 +27,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.example.avatar_crab.R
+import piber.avatar_crab
+    .R
 import com.example.avatar_crab.data.ActivityData
 import com.example.avatar_crab.data.exercise.*
 import com.example.avatar_crab.presentation.MainViewModel

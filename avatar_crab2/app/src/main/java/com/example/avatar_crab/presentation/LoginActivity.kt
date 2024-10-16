@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.example.avatar_crab.R
+import piber.avatar_crab.R
 import com.example.avatar_crab.presentation.RetrofitClient
 import com.example.avatar_crab.presentation.userinfo.UserInfoActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn

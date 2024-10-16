@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.avatar_crab.R
+import piber.avatar_crab.R
 
 data class NotificationItem(val message: String, val timestamp: String)
 
