@@ -147,7 +147,6 @@
                         android:layout_marginEnd="352dp"
                         android:contentDescription="@string/heart_image"
                         android:src="@drawable/ic_heart"
-                        app:layout_constraintBottom_toTopOf="@+id/heartRateChart"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -249,7 +248,9 @@
                                 android:text="A1: Q1 ~ Q2"
                                 android:textColor="@color/black"
                                 android:textSize="18sp"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintStart_toStartOf="parent" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.cardview.widget.CardView>
@@ -278,7 +279,9 @@
                                 android:text="A2: Q2 ~ Q3"
                                 android:textColor="@color/black"
                                 android:textSize="18sp"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintStart_toStartOf="parent" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.cardview.widget.CardView>
@@ -301,7 +304,8 @@
                             app:cardBackgroundColor="@android:color/white"
                             app:cardCornerRadius="16dp"
                             app:cardElevation="8dp"
-                            app:layout_constraintStart_toStartOf="parent">
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
 
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
@@ -314,7 +318,9 @@
                                     android:layout_height="wrap_content"
                                     android:text="서맥"
                                     android:textColor="@color/black"
-                                    android:textSize="18sp" />
+                                    android:textSize="18sp"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent" />
 
                                 <TextView
                                     android:id="@+id/tvBradycardiaRange"
@@ -324,6 +330,7 @@
                                     android:textColor="@color/black"
                                     android:textSize="16sp"
                                     app:layout_constraintTop_toBottomOf="@id/tvBradycardia"
+                                    app:layout_constraintStart_toStartOf="parent"
                                     android:layout_marginTop="4dp" />
                             </androidx.constraintlayout.widget.ConstraintLayout>
                         </androidx.cardview.widget.CardView>
@@ -338,7 +345,8 @@
                             app:cardBackgroundColor="@android:color/white"
                             app:cardCornerRadius="16dp"
                             app:cardElevation="8dp"
-                            app:layout_constraintStart_toEndOf="@id/bradycardiaCard">
+                            app:layout_constraintStart_toEndOf="@id/bradycardiaCard"
+                            app:layout_constraintTop_toTopOf="parent">
 
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
@@ -351,7 +359,9 @@
                                     android:layout_height="wrap_content"
                                     android:text="빈맥"
                                     android:textColor="@color/black"
-                                    android:textSize="18sp" />
+                                    android:textSize="18sp"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent" />
 
                                 <TextView
                                     android:id="@+id/tvTachycardiaRange"
@@ -361,6 +371,7 @@
                                     android:textColor="@color/black"
                                     android:textSize="16sp"
                                     app:layout_constraintTop_toBottomOf="@id/tvTachycardia"
+                                    app:layout_constraintStart_toStartOf="parent"
                                     android:layout_marginTop="4dp" />
                             </androidx.constraintlayout.widget.ConstraintLayout>
                         </androidx.cardview.widget.CardView>
@@ -375,7 +386,9 @@
                             app:cardBackgroundColor="@android:color/white"
                             app:cardCornerRadius="16dp"
                             app:cardElevation="8dp"
-                            app:layout_constraintStart_toEndOf="@id/tachycardiaCard">
+                            app:layout_constraintStart_toEndOf="@id/tachycardiaCard"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
 
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
@@ -388,7 +401,9 @@
                                     android:layout_height="wrap_content"
                                     android:text="부정맥"
                                     android:textColor="@color/black"
-                                    android:textSize="18sp" />
+                                    android:textSize="18sp"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent" />
 
                                 <TextView
                                     android:id="@+id/tvArrhythmiaRange"
@@ -398,6 +413,7 @@
                                     android:textColor="@color/black"
                                     android:textSize="16sp"
                                     app:layout_constraintTop_toBottomOf="@id/tvArrhythmia"
+                                    app:layout_constraintStart_toStartOf="parent"
                                     android:layout_marginTop="4dp" />
                             </androidx.constraintlayout.widget.ConstraintLayout>
                         </androidx.cardview.widget.CardView>
