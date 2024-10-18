@@ -24,4 +24,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "avatar_crab"
-include(":app", ":opencv")
+include(":app")

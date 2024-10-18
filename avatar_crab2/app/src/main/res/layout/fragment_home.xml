@@ -1,13 +1,12 @@
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.core.widget.NestedScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -47,7 +46,6 @@
                     android:layout_height="85dp"
                     android:contentDescription="프로필 이미지"
                     android:scaleType="fitCenter"
-
                     android:src="@drawable/ic_default_profile"
                     app:circleCrop="true" />
             </androidx.cardview.widget.CardView>
@@ -81,15 +79,15 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                    android:id="@+id/tvWatchStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="충전중"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    app:layout_constraintStart_toEndOf="@id/watchImageView"
-                    app:layout_constraintTop_toTopOf="@id/watchImageView"
-                    android:layout_marginStart="8dp" />
+                        android:id="@+id/tvWatchStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="축제중"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toEndOf="@id/watchImageView"
+                        app:layout_constraintTop_toTopOf="@id/watchImageView"
+                        android:layout_marginStart="8dp" />
 
                     <TextView
                         android:id="@+id/tvWatchPercentage"
@@ -103,7 +101,6 @@
                         android:layout_marginStart="8dp" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
-
 
             <!-- 부제목: 요약 -->
             <TextView
@@ -125,7 +122,7 @@
                 android:background="@android:color/transparent"
                 app:layout_constraintTop_toBottomOf="@id/tvSummary" />
 
-            <!-- 2행 왼쪽 카드뷰 : 심박수 + 그래프 -->
+            <!-- 2행 카드뷰: 심박수 -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/heartRateCard"
                 android:layout_width="0dp"
@@ -175,57 +172,6 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 2행 오른쪽 카드뷰 : 스트레스 + 그래프 -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/stressCard"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="@android:color/white"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/heartRateCard">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="0dp">
-
-                    <ImageView
-                        android:id="@+id/stressIcon"
-                        android:layout_width="38dp"
-                        android:layout_height="30dp"
-                        android:layout_marginEnd="336dp"
-                        android:contentDescription="@string/stress_image"
-                        android:src="@drawable/ic_stress"
-                        app:layout_constraintBottom_toTopOf="@+id/stressChart"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.0" />
-
-                    <TextView
-                        android:id="@+id/tvStress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="30%"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/stressIcon"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <com.github.mikephil.charting.charts.LineChart
-                        android:id="@+id/stressChart"
-                        android:layout_width="0dp"
-                        android:layout_height="100dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvStress" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
-
             <!-- 부제목: 정보 -->
             <TextView
                 android:id="@+id/tvInfo"
@@ -236,15 +182,230 @@
                 android:textSize="30sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/stressCard" />
+                app:layout_constraintTop_toBottomOf="@id/heartRateCard" />
 
-            <!-- 부제목 위아래 공간 확보 -->
-            <View
-                android:id="@+id/infoSpacer"
-                android:layout_width="match_parent"
-                android:layout_height="8dp"
-                android:background="@android:color/transparent"
-                app:layout_constraintTop_toBottomOf="@id/tvInfo" />
+            <!-- HDA 카드뷰 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/hdaCard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvInfo">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <!-- 상단에 아이콘과 제목 -->
+                    <ImageView
+                        android:id="@+id/hdaIcon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:contentDescription="HDA 아이콘"
+                        android:src="@drawable/ic_hda"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvHdaTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="HDA"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@id/hdaIcon"
+                        app:layout_constraintTop_toTopOf="@id/hdaIcon"
+                        android:layout_marginStart="8dp" />
+
+                    <!-- A1, A2 카드뷰 추가 -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/a1Card"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintWidth_percent="0.5"
+                        android:layout_margin="8dp"
+                        app:cardBackgroundColor="@android:color/white"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="8dp"
+                        app:layout_constraintTop_toBottomOf="@id/tvHdaTitle"
+                        app:layout_constraintStart_toStartOf="parent">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:id="@+id/tvA1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="A1: Q1 ~ Q2"
+                                android:textColor="@color/black"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/a2Card"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintWidth_percent="0.5"
+                        android:layout_margin="8dp"
+                        app:cardBackgroundColor="@android:color/white"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="8dp"
+                        app:layout_constraintTop_toBottomOf="@id/tvHdaTitle"
+                        app:layout_constraintEnd_toEndOf="parent">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:id="@+id/tvA2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="A2: Q2 ~ Q3"
+                                android:textColor="@color/black"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- 3열로 배치된 서맥, 빈맥, 부정맥 카드뷰 -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/a1Card">
+
+                        <!-- 서맥 카드뷰 -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/bradycardiaCard"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintWidth_percent="0.3"
+                            android:layout_margin="8dp"
+                            app:cardBackgroundColor="@android:color/white"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="8dp"
+                            app:layout_constraintStart_toStartOf="parent">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="16dp">
+
+                                <TextView
+                                    android:id="@+id/tvBradycardia"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="서맥"
+                                    android:textColor="@color/black"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:id="@+id/tvBradycardiaRange"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="~ 50 BPM"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp"
+                                    app:layout_constraintTop_toBottomOf="@id/tvBradycardia"
+                                    android:layout_marginTop="4dp" />
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- 빈맥 카드뷰 -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/tachycardiaCard"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintWidth_percent="0.3"
+                            android:layout_margin="8dp"
+                            app:cardBackgroundColor="@android:color/white"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="8dp"
+                            app:layout_constraintStart_toEndOf="@id/bradycardiaCard">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="16dp">
+
+                                <TextView
+                                    android:id="@+id/tvTachycardia"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="빈맥"
+                                    android:textColor="@color/black"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:id="@+id/tvTachycardiaRange"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="90 BPM ~"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp"
+                                    app:layout_constraintTop_toBottomOf="@id/tvTachycardia"
+                                    android:layout_marginTop="4dp" />
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- 부정맥 카드뷰 -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/arrhythmiaCard"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintWidth_percent="0.3"
+                            android:layout_margin="8dp"
+                            app:cardBackgroundColor="@android:color/white"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="8dp"
+                            app:layout_constraintStart_toEndOf="@id/tachycardiaCard">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="16dp">
+
+                                <TextView
+                                    android:id="@+id/tvArrhythmia"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="부정맥"
+                                    android:textColor="@color/black"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:id="@+id/tvArrhythmiaRange"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="50 ~ 90"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp"
+                                    app:layout_constraintTop_toBottomOf="@id/tvArrhythmia"
+                                    android:layout_marginTop="4dp" />
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+                        </androidx.cardview.widget.CardView>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
 
             <!-- 3행 카드뷰 : 지도로 보기 -->
             <androidx.cardview.widget.CardView
@@ -257,7 +418,7 @@
                 app:cardElevation="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/infoSpacer">
+                app:layout_constraintTop_toBottomOf="@id/hdaCard">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -288,68 +449,13 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 부제목: 기사 -->
-            <TextView
-                android:id="@+id/tvArticle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="기사"
-                android:textColor="@color/black"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/mapCard" />
-
             <!-- 부제목 위아래 공간 확보 -->
             <View
                 android:id="@+id/articleSpacer"
                 android:layout_width="match_parent"
                 android:layout_height="8dp"
                 android:background="@android:color/transparent"
-                app:layout_constraintTop_toBottomOf="@id/tvArticle" />
-
-            <!-- 4행 카드뷰 : 기사 내용 (큰 이미지 + 텍스트) -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/articleCard"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="@android:color/white"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/articleSpacer">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp">
-
-                    <ImageView
-                        android:id="@+id/articleImage"
-                        android:layout_width="0dp"
-                        android:layout_height="200dp"
-                        android:layout_marginBottom="8dp"
-                        android:contentDescription="기사 이미지"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/run"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tvArticleContent"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="심박수 관련 기사 내용이 여기에 들어갑니다. 심박수와 건강의 관계에 대한 중요한 정보를 제공합니다."
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/articleImage" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+                app:layout_constraintTop_toBottomOf="@id/mapCard" />
 
             <!-- 맨 하단에 보이지 않는 얇은 박스 -->
             <View
@@ -357,7 +463,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:background="@android:color/transparent"
-                app:layout_constraintTop_toBottomOf="@id/articleCard"
+                app:layout_constraintTop_toBottomOf="@id/mapCard"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 

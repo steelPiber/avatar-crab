@@ -27,8 +27,8 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.example.avatar_crab" />
-                  <option name="mobileSdkAppId" value="1:335139264868:android:d43f224972d82939860271" />
+                  <option name="appId" value="piber.avatar_crab" />
+                  <option name="mobileSdkAppId" value="1:335139264868:android:078822b4f7a522e0860271" />
                   <option name="projectId" value="avatar-crab" />
                   <option name="projectNumber" value="335139264868" />
                 </ConnectionSetting>
