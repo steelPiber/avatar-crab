@@ -68,6 +68,10 @@ interface ApiService {
         @Body requestBody: RequestBody
     ): Call<ResponseBody>
 
+    // 폴리곤 데이터 조회 (GET) - matching the curl command
+    @GET("/polygondata")
+    fun getPolygonDataByEmail(@Query("email") email: String): Call<List<MapPolygonData>>
+
 
     // 심박수 정보 조회 (GET)
     @GET("/heartinfo")
@@ -76,6 +80,8 @@ interface ApiService {
     @GET("/status")
     fun serverCheck(): Call<SplashActivity.ServerStatusResponse>
 
-    @GET("/hda")
+    @GET("/daily-box")
     fun getHDAData(@Query("email") email: String): Call<List<HdaDataPoint>>
+
+
 }

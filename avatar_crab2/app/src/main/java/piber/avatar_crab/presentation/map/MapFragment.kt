@@ -18,6 +18,7 @@ import piber.avatar_crab.R
 import piber.avatar_crab.presentation.MainViewModel
 import piber.avatar_crab.presentation.RetrofitClient
 import piber.avatar_crab.presentation.data.MapPolygonData
+import piber.avatar_crab.presentation.data.LocationData
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -398,7 +399,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
         val coordinatesJson = polygonPoints.joinToString(prefix = "[", postfix = "]") { "{\"lat\":${it.latitude}, \"lng\":${it.longitude}}" }
-        val polygonData = MapPolygonData(email = email, title = title, coordinates = coordinatesJson)
+        val polygonData = MapPolygonData(email = email, title = title, coordinates = coordinatesJson, location_data = emptyList())
         Log.d("MapFragment", "전송할 폴리곤 데이터: $coordinatesJson")
 
         val call = RetrofitClient.heartRateInstance.sendPolygonData(polygonData)
@@ -469,3 +470,5 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         bottomSheetDialog.show()
     }
 }
+
+

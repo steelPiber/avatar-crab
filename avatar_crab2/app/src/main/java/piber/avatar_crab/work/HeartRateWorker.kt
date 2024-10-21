@@ -13,12 +13,12 @@ import retrofit2.HttpException
 class HeartRateWorker(context: Context, workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-        val bpm = inputData.getString("bpm")
+        val bpm = inputData.getString("bpm")?.toIntOrNull()
         val tag = inputData.getString("tag")
         val timestamp = inputData.getString("timestamp")
         val email = inputData.getString("email")
-        val latitude = inputData.getString("latitude")?.toDoubleOrNull()  // 추가
-        val longitude = inputData.getString("longitude")?.toDoubleOrNull() // 추가
+        val latitude = inputData.getString("latitude")
+        val longitude = inputData.getString("longitude")
 
         if (bpm == null || tag == null || timestamp == null || email == null) {
             Log.e("HeartRateWorker", "입력 데이터 누락")

@@ -28,7 +28,14 @@ class MobileWearableService : Service(), DataClient.OnDataChangedListener {
                 val dataItem = event.dataItem
                 if (dataItem.uri.path == "/heart_rate") {
                     val dataMap = DataMapItem.fromDataItem(dataItem).dataMap
-                    val bpm = dataMap.getString("bpm")
+
+                    // Integer로 bpm 값을 받기
+                    val bpm = if (dataMap.containsKey("bpm")) {
+                        dataMap.getInt("bpm")  // getInt로 처리
+                    } else {
+                        null
+                    }
+
                     val tag = dataMap.getString("tag")
                     val timestamp = dataMap.getString("timestamp")
 
@@ -36,7 +43,7 @@ class MobileWearableService : Service(), DataClient.OnDataChangedListener {
 
                     // 데이터를 MainActivity로 전달
                     val intent = Intent("com.example.avatar_crab.HEART_RATE_UPDATE")
-                    intent.putExtra("bpm", bpm)
+                    intent.putExtra("bpm", bpm?.toString())  // String으로 변환하여 전달
                     intent.putExtra("tag", tag)
                     intent.putExtra("timestamp", timestamp)
                     sendBroadcast(intent)
@@ -45,7 +52,9 @@ class MobileWearableService : Service(), DataClient.OnDataChangedListener {
         }
     }
 
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 }
+

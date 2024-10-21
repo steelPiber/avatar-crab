@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.FLASHLIGHT"/>
 
@@ -53,8 +54,6 @@
             </intent-filter>
         </activity>
 
-
-
         <activity
             android:name=".presentation.MainActivity"
             android:exported="true" />
@@ -69,8 +68,7 @@
 
         <activity android:name=".presentation.SegmentDetailActivity" />
 
-
-        <!-- Services -->
+        <!-- MobileWearableService를 위한 선언 -->
         <service
             android:name=".presentation.MobileWearableService"
             android:exported="true">
@@ -79,5 +77,14 @@
                     tools:ignore="WearableBindListener" />
             </intent-filter>
         </service>
+
+        <!-- LocationService를 위한 선언 -->
+        <service
+            android:name=".services.LocationService"
+            android:foregroundServiceType="location"
+            android:enabled="true"
+            android:exported="false"
+            tools:ignore="ForegroundServicePermission" />
+
     </application>
 </manifest>

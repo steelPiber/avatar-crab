@@ -58,6 +58,10 @@ class HomeFragment : Fragment() {
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var hdaCard: CardView
     private lateinit var a1TextView: TextView
+    private lateinit var a2TextView: TextView
+    private lateinit var tvBradycardiaRange: TextView
+    private lateinit var tvTachycardiaRange: TextView
+    private lateinit var tvArrhythmiaRange: TextView
 
     private val apiService by lazy { RetrofitClient.heartRateInstance }
 
@@ -86,6 +90,11 @@ class HomeFragment : Fragment() {
         // HDA 카드뷰 바인딩
         hdaCard = view.findViewById(R.id.hdaCard)
         a1TextView = view.findViewById(R.id.tvA1)
+        a2TextView = view.findViewById(R.id.tvA2)
+        tvBradycardiaRange = view.findViewById(R.id.tvBradycardiaRange)
+        tvTachycardiaRange = view.findViewById(R.id.tvTachycardiaRange)
+        tvArrhythmiaRange = view.findViewById(R.id.tvArrhythmiaRange)
+
         // HomeFragment 시작 시 자동으로 A1 값을 업데이트
         updateA1Value()
 
@@ -162,6 +171,7 @@ class HomeFragment : Fragment() {
     private fun updateA1Value() {
         val email = viewModel.userEmail.value
         if (!email.isNullOrEmpty()) {
+            // Retrofit을 통해 서버로부터 HDA 데이터를 요청합니다.
             apiService.getHDAData(email).enqueue(object : Callback<List<HdaDataPoint>> {
                 override fun onResponse(
                     call: Call<List<HdaDataPoint>>,
@@ -169,15 +179,23 @@ class HomeFragment : Fragment() {
                 ) {
                     if (response.isSuccessful) {
                         val hdaData = response.body()
+                        Log.d("HomeFragment", "HDA Data Response: $hdaData")
+
+                        // 데이터가 null이 아니고 비어있지 않은지 확인
                         if (!hdaData.isNullOrEmpty()) {
                             updateA1WithCurrentTime(hdaData)
+                        } else {
+                            Log.e("HomeFragment", "HDA 데이터가 비어 있습니다.")
+                            Toast.makeText(requireContext(), "HDA 데이터가 없습니다.", Toast.LENGTH_SHORT).show()
                         }
                     } else {
+                        Log.e("HomeFragment", "HDA 데이터 가져오기 실패: ${response.errorBody()?.string()}")
                         Toast.makeText(requireContext(), "HDA 데이터를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onFailure(call: Call<List<HdaDataPoint>>, t: Throwable) {
+                    Log.e("HomeFragment", "서버 연결 실패", t)
                     Toast.makeText(requireContext(), "서버 연결에 실패했습니다.", Toast.LENGTH_SHORT).show()
                 }
             })
@@ -186,29 +204,63 @@ class HomeFragment : Fragment() {
         }
     }
 
-    // 현재 시간에 맞는 데이터로 A1 값을 갱신
     private fun updateA1WithCurrentTime(hdaData: List<HdaDataPoint>) {
         // 현재 시간 가져오기
         val currentTime = Calendar.getInstance()
-        val currentHour = currentTime.get(Calendar.HOUR_OF_DAY).toString().padStart(2, '0')
-        val currentMinute = currentTime.get(Calendar.MINUTE)
+        val currentHour = currentTime.get(Calendar.HOUR_OF_DAY)
+
+        Log.d("HomeFragment", "현재 시간: ${currentHour}시")
 
         // 현재 시간에 맞는 HDA 데이터 찾기
         val currentData = hdaData.find { dataPoint ->
-            dataPoint.hour == currentHour && dataPoint.min == currentMinute
+            val dataHour = dataPoint.hour.toInt()  // 서버에서 받은 시간 데이터를 정수로 변환
+            dataHour == currentHour
         }
 
-        // A1 값을 업데이트
+        // 현재 시간에 맞는 데이터가 있으면 A1, A2 값을 갱신
         currentData?.let { dataPoint ->
-            val a1Value = (dataPoint.q1 + dataPoint.q2) / 2
-            Log.d("HomeFragment", "A1 값 갱신: $a1Value")
+            val q1 = dataPoint.q1
+            val q2 = dataPoint.q2
+            val q3 = dataPoint.q3
+            Log.d("HomeFragment", "A1 값 갱신: Q1=$q1, Q2=$q2")
+            Log.d("HomeFragment", "A2 값 갱신: Q2=$q2, Q3=$q3")
 
-            // A1 값을 화면에 표시
-            a1TextView.text = "A1: $a1Value"
+            // A1 값을 "A1: Q1 ~ Q2" 형식으로 화면에 표시
+            a1TextView.text = "A1: $q1 ~ $q2"
+
+            // A2 값을 "A2: Q2 ~ Q3" 형식으로 화면에 표시
+            a2TextView.text = "A2: $q2 ~ $q3"
+
+            // 서맥, 빈맥, 부정맥 값 업데이트
+            updateBradyTachyArrhythmia(dataPoint)
+
         } ?: run {
+            Log.e("HomeFragment", "현재 시간에 대한 데이터가 없습니다.")
             Toast.makeText(requireContext(), "현재 시간에 대한 데이터가 없습니다.", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun updateBradyTachyArrhythmia(dataPoint: HdaDataPoint) {
+        // 서맥: q3 이상
+        val bradycardiaRange = "${dataPoint.q3} BPM 이상"
+        tvBradycardiaRange.text = bradycardiaRange
+
+        // 빈맥: q1 이하
+        val tachycardiaRange = "${dataPoint.q1} BPM 이하"
+        tvTachycardiaRange.text = tachycardiaRange
+
+        // 부정맥: q1 ~ q3 사이
+        val arrhythmiaRange = "${dataPoint.q1} ~ ${dataPoint.q3} BPM"
+        tvArrhythmiaRange.text = arrhythmiaRange
+
+        Log.d("HomeFragment", "서맥: ${dataPoint.q3} 이상, 빈맥: ${dataPoint.q1} 이하, 부정맥: ${dataPoint.q1} ~ ${dataPoint.q3}")
+    }
+
+
+
+
+
+
 
     private fun fetchHeartInfo() {
         val email = viewModel.userEmail.value

@@ -28,7 +28,6 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.delay
 
-
 class MainViewModel(
     private val challengeRepository: ChallengeRepository,
     application: Application
@@ -36,7 +35,6 @@ class MainViewModel(
 
     private val _userInfo = MutableLiveData<UserInfo>()
     val userInfo: LiveData<UserInfo> get() = _userInfo
-
 
     // MutableLiveData to hold heart rate
     private val _realTimeHeartRate = MutableLiveData<Int>()
@@ -58,7 +56,6 @@ class MainViewModel(
 
     private val _userAccount = MutableLiveData<GoogleSignInAccount?>()
     val userAccount: LiveData<GoogleSignInAccount?> get() = _userAccount
-
 
     private val _isTracking = MutableLiveData<Boolean>()
     val isTracking: LiveData<Boolean> get() = _isTracking
@@ -85,22 +82,28 @@ class MainViewModel(
     init {
         _isTracking.value = false
         loadSavedData()
-
-
         startSendingHeartRateToServer()
-
     }
 
-    //실시간심박 수 값
+    // 실시간 심박수 값
     fun updateRealTimeHeartRate(heartRate: Int) {
         _realTimeHeartRate.value = heartRate
+        sendHeartRateData(HeartRateData(
+            bpm = heartRate,
+            tag = "rest",  // You may change the tag accordingly
+            timestamp = System.currentTimeMillis().toString(),
+            email = getEmailFromPreferences(),
+            latitude = null,
+            longitude = null
+        ))
     }
+
     // 수신된 심박수 데이터를 버퍼에 추가
     fun addHeartRateDataToBuffer(bpm: Int, tag: String, timestamp: Long) {
         val heartRateData = ActivityData(bpm = bpm, tag = tag, timestamp = timestamp)
         _heartRateBuffer.add(heartRateData)
     }
-    // 1분 간격으로 심박수와 위치 데이터를 서버로 전송하는 메서드
+
     private fun startSendingHeartRateToServer() {
         viewModelScope.launch(Dispatchers.IO) {
             while (true) {
@@ -108,23 +111,30 @@ class MainViewModel(
                     val heartRateToSend = _heartRateBuffer.toList()
                     _heartRateBuffer.clear()
 
-                    val location = getLocation()
-                    val latitude = location?.latitude
-                    val longitude = location?.longitude
+                    val location = getLocation() // 위치 가져오기
+                    if (location != null) {
+                        val latitude = location.latitude
+                        val longitude = location.longitude
 
-                    heartRateToSend.forEach { data ->
-                        val heartRateData = HeartRateData(
-                            bpm = data.bpm.toString(),
-                            tag = data.tag,
-                            timestamp = data.timestamp.toString(),
-                            email = getEmailFromPreferences(),
-                            latitude = latitude,
-                            longitude = longitude
-                        )
-                        sendHeartRateData(heartRateData)
+                        // bpm 값이 0이 아닌 데이터만 필터링
+                        val filteredHeartRateData = heartRateToSend.filter { it.bpm > 0 }
+
+                        filteredHeartRateData.forEach { data ->
+                            val heartRateData = HeartRateData(
+                                bpm = data.bpm,
+                                tag = data.tag,
+                                timestamp = data.timestamp.toString(),
+                                email = getEmailFromPreferences(),
+                                latitude = location?.latitude?.toString(),
+                                longitude = location?.longitude?.toString()
+                            )
+                            sendHeartRateData(heartRateData) // 서버로 데이터 전송
+                        }
+                    } else {
+                        Log.e("MainViewModel", "위치를 가져올 수 없어 데이터를 전송하지 않습니다.")
                     }
                 }
-                delay(10000) // 1분 대기
+                delay(10000) // 10초 대기
             }
         }
     }
@@ -141,8 +151,6 @@ class MainViewModel(
     fun setECGDetectionEnabled(isEnabled: Boolean) {
         _isECGDetectionEnabled.value = isEnabled
     }
-
-
 
     fun setUserEmail(email: String?) {
         _userEmail.value = email  // Allow nullable values
@@ -190,8 +198,9 @@ class MainViewModel(
     private suspend fun getHeartRate(): Int? {
         return _heartRate.value?.toInt()
     }
+
     // 위치 가져오는 메서드
-    private fun getLocation(): Location? {
+    private suspend fun getLocation(): Location? = withContext(Dispatchers.IO) {
         var currentLocation: Location? = null
 
         if (ContextCompat.checkSelfPermission(getApplication<Application>(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -200,27 +209,31 @@ class MainViewModel(
                 .addOnSuccessListener { location: Location? ->
                     if (location != null) {
                         currentLocation = location
-                        Log.d("piber.avatar_crab.presentation.MainActivity", "위치 가져오기 성공: ${location.latitude}, ${location.longitude}")
+                        Log.d("MainViewModel", "위치 가져오기 성공: ${location.latitude}, ${location.longitude}")
                     } else {
-                        Log.e("piber.avatar_crab.presentation.MainActivity", "위치 정보를 가져올 수 없습니다.")
+                        Log.e("MainViewModel", "위치 정보를 가져올 수 없습니다.")
                     }
                 }
                 .addOnFailureListener {
-                    Log.e("piber.avatar_crab.presentation.MainActivity", "위치 가져오기 실패", it)
+                    Log.e("MainViewModel", "위치 가져오기 실패", it)
                 }
         }
-        return currentLocation
+        delay(1000) // 위치 가져오는 시간이 있으므로 대기 (필요시 설정)
+        currentLocation
     }
-
-
 
     // Retrofit을 사용하여 심박수 데이터를 서버로 전송하는 메서드
     private fun sendHeartRateData(heartRateData: HeartRateData) {
+        // 전송할 데이터를 로그로 출력하여 확인
+        Log.d("HeartRate", "전송 데이터: BPM=${heartRateData.bpm}, Email=${heartRateData.email}, Tag=${heartRateData.tag}, Timestamp=${heartRateData.timestamp}, Latitude=${heartRateData.latitude}, Longitude=${heartRateData.longitude}")
+
         val call: Call<Void> = RetrofitClient.heartRateInstance.sendHeartRateData(heartRateData)
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (!response.isSuccessful) {
                     Log.e("HeartRate", "데이터 전송 실패: ${response.code()} ${response.message()}")
+                } else {
+                    Log.d("HeartRate", "데이터 전송 성공")
                 }
             }
 
@@ -229,7 +242,6 @@ class MainViewModel(
             }
         })
     }
-
 
     private var isDataLoaded = false  // 데이터가 이미 로드되었는지 확인하는 변수
 
@@ -271,12 +283,12 @@ class MainViewModel(
         isDataLoaded = true  // 데이터가 로드되었음을 기록
     }
 
-
     // 이메일 가져오기
     private fun getEmailFromPreferences(): String? {
         val sharedPreferences = getApplication<Application>().getSharedPreferences("AvatarCrabPrefs", Context.MODE_PRIVATE)
         return sharedPreferences.getString("userEmail", null)
     }
+
     fun fetchUserInfo(email: String) {
         val call: Call<UserInfo> = RetrofitClient.heartRateInstance.getUserInfo(email)
         call.enqueue(object : Callback<UserInfo> {
@@ -296,6 +308,7 @@ class MainViewModel(
             }
         })
     }
+
     fun updateUserInfo(updatedUserInfo: UserInfo) {
         val call: Call<Void> = RetrofitClient.heartRateInstance.updateUserInfo(updatedUserInfo)
         call.enqueue(object : Callback<Void> {
@@ -313,7 +326,4 @@ class MainViewModel(
             }
         })
     }
-
-
-
 }

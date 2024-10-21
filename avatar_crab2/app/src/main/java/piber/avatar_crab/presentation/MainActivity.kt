@@ -32,6 +32,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.Wearable
 import kotlinx.coroutines.launch
+import piber.avatar_crab.services.LocationService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,6 +40,19 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
+
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                // 권한이 허용되면 서비스를 시작할 수 있습니다.
+                startLocationService()
+            } else {
+                // 권한이 거부된 경우 사용자에게 안내
+                Toast.makeText(this, "위치 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
     // 위치 정보를 제공하는 FusedLocationProviderClient
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -105,6 +119,11 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
 
         // 웨어러블 데이터 리스너 등록
         Wearable.getDataClient(this).addListener(this)
+    }
+
+    private fun startLocationService() {
+        val serviceIntent = Intent(this, LocationService::class.java)
+        ContextCompat.startForegroundService(this, serviceIntent)
     }
 
     // Google Sign-In 실행
@@ -217,8 +236,8 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
                 val dataItem = event.dataItem
                 if (dataItem.uri.path == "/heart_rate") {
                     val dataMap = DataMapItem.fromDataItem(dataItem).dataMap
-                    val bpm = dataMap.getString("bpm")?.toIntOrNull()
-                    val tag = dataMap.getString("tag")
+                    val bpm = dataMap.getInt("bpm")
+                    val tag: String? = dataMap.getString("tag")
                     val timestampString = dataMap.getString("timestamp")
 
                     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -226,11 +245,11 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
                         val date = dateFormat.parse(timestampString)
                         date?.time
                     } catch (e: Exception) {
-                        Log.e("com.example.avatar_crab.presentation.MainActivity", "Failed to parse timestamp: $timestampString", e)
+                        Log.e("piber.avatar_crab.presentation.MainActivity", "Failed to parse timestamp: $timestampString", e)
                         null
                     }
 
-                    Log.d("com.example.avatar_crab.presentation.MainActivity", "데이터 수신: $bpm BPM, 태그: $tag at $timestamp")
+                    Log.d("piber.avatar_crab.presentation.MainActivity", "데이터 수신: $bpm BPM, 태그: $tag at $timestamp")
 
                     if (timestamp != null && bpm != null && tag != null) {
                         viewModel.addHeartRateDataToBuffer(bpm, tag, timestamp)

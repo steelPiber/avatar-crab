@@ -198,7 +198,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:padding="16dp">
 
                     <!-- 상단에 아이콘과 제목 -->
@@ -215,97 +215,111 @@
                         android:id="@+id/tvHdaTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
                         android:text="HDA"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toEndOf="@id/hdaIcon"
-                        app:layout_constraintTop_toTopOf="@id/hdaIcon"
-                        android:layout_marginStart="8dp" />
+                        app:layout_constraintTop_toTopOf="@id/hdaIcon" />
 
                     <!-- A1, A2 카드뷰 추가 -->
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/a1Card"
-                        android:layout_width="0dp"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layout_constraintWidth_percent="0.5"
-                        android:layout_margin="8dp"
-                        app:cardBackgroundColor="@android:color/white"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="8dp"
-                        app:layout_constraintTop_toBottomOf="@id/tvHdaTitle"
-                        app:layout_constraintStart_toStartOf="parent">
+                        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+                        app:layout_constraintTop_toBottomOf="@+id/hdaIcon"
+                        tools:layout_editor_absoluteX="16dp">
 
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/a1Card"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:padding="16dp">
+                            android:layout_margin="8dp"
+                            app:cardBackgroundColor="@android:color/white"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="8dp"
+                            app:layout_constraintEnd_toStartOf="@+id/a2Card"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.5">
 
-                            <TextView
-                                android:id="@+id/tvA1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="A1: Q1 ~ Q2"
-                                android:textColor="@color/black"
-                                android:textSize="18sp"
-                                android:textStyle="bold"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintStart_toStartOf="parent" />
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:padding="16dp">
 
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-                    </androidx.cardview.widget.CardView>
+                                <TextView
+                                    android:id="@+id/tvA1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="A1: Q1 ~ Q2"
+                                    android:textColor="@color/black"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
 
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/a2Card"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintWidth_percent="0.5"
-                        android:layout_margin="8dp"
-                        app:cardBackgroundColor="@android:color/white"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="8dp"
-                        app:layout_constraintTop_toBottomOf="@id/tvHdaTitle"
-                        app:layout_constraintEnd_toEndOf="parent">
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+                        </androidx.cardview.widget.CardView>
 
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/a2Card"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:padding="16dp">
+                            android:layout_margin="8dp"
+                            app:cardBackgroundColor="@android:color/white"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="8dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/a1Card"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.5">
 
-                            <TextView
-                                android:id="@+id/tvA2"
-                                android:layout_width="wrap_content"
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="A2: Q2 ~ Q3"
-                                android:textColor="@color/black"
-                                android:textSize="18sp"
-                                android:textStyle="bold"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintStart_toStartOf="parent" />
+                                android:padding="16dp">
 
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-                    </androidx.cardview.widget.CardView>
+                                <TextView
+                                    android:id="@+id/tvA2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="A2: Q2 ~ Q3"
+                                    android:textColor="@color/black"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+                        </androidx.cardview.widget.CardView>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <!-- 3열로 배치된 서맥, 빈맥, 부정맥 카드뷰 -->
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="0dp"
+                        android:id="@+id/constraintLayout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/a1Card">
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/a1Card"
+                        tools:layout_editor_absoluteX="16dp">
 
                         <!-- 서맥 카드뷰 -->
                         <androidx.cardview.widget.CardView
                             android:id="@+id/bradycardiaCard"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            app:layout_constraintWidth_percent="0.3"
                             android:layout_margin="8dp"
                             app:cardBackgroundColor="@android:color/white"
                             app:cardCornerRadius="16dp"
                             app:cardElevation="8dp"
+                            app:layout_constraintEnd_toStartOf="@+id/tachycardiaCard"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.3">
 
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
@@ -319,19 +333,19 @@
                                     android:text="서맥"
                                     android:textColor="@color/black"
                                     android:textSize="18sp"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent" />
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
 
                                 <TextView
                                     android:id="@+id/tvBradycardiaRange"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
                                     android:text="~ 50 BPM"
                                     android:textColor="@color/black"
                                     android:textSize="16sp"
-                                    app:layout_constraintTop_toBottomOf="@id/tvBradycardia"
                                     app:layout_constraintStart_toStartOf="parent"
-                                    android:layout_marginTop="4dp" />
+                                    app:layout_constraintTop_toBottomOf="@id/tvBradycardia" />
                             </androidx.constraintlayout.widget.ConstraintLayout>
                         </androidx.cardview.widget.CardView>
 
@@ -340,13 +354,14 @@
                             android:id="@+id/tachycardiaCard"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            app:layout_constraintWidth_percent="0.3"
                             android:layout_margin="8dp"
                             app:cardBackgroundColor="@android:color/white"
                             app:cardCornerRadius="16dp"
                             app:cardElevation="8dp"
+                            app:layout_constraintEnd_toStartOf="@+id/arrhythmiaCard"
                             app:layout_constraintStart_toEndOf="@id/bradycardiaCard"
-                            app:layout_constraintTop_toTopOf="parent">
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.3">
 
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
@@ -360,19 +375,19 @@
                                     android:text="빈맥"
                                     android:textColor="@color/black"
                                     android:textSize="18sp"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent" />
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
 
                                 <TextView
                                     android:id="@+id/tvTachycardiaRange"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
                                     android:text="90 BPM ~"
                                     android:textColor="@color/black"
                                     android:textSize="16sp"
-                                    app:layout_constraintTop_toBottomOf="@id/tvTachycardia"
                                     app:layout_constraintStart_toStartOf="parent"
-                                    android:layout_marginTop="4dp" />
+                                    app:layout_constraintTop_toBottomOf="@id/tvTachycardia" />
                             </androidx.constraintlayout.widget.ConstraintLayout>
                         </androidx.cardview.widget.CardView>
 
@@ -381,14 +396,14 @@
                             android:id="@+id/arrhythmiaCard"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            app:layout_constraintWidth_percent="0.3"
                             android:layout_margin="8dp"
                             app:cardBackgroundColor="@android:color/white"
                             app:cardCornerRadius="16dp"
                             app:cardElevation="8dp"
-                            app:layout_constraintStart_toEndOf="@id/tachycardiaCard"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
+                            app:layout_constraintStart_toEndOf="@id/tachycardiaCard"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.3">
 
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
@@ -402,19 +417,19 @@
                                     android:text="부정맥"
                                     android:textColor="@color/black"
                                     android:textSize="18sp"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent" />
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
 
                                 <TextView
                                     android:id="@+id/tvArrhythmiaRange"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
                                     android:text="50 ~ 90"
                                     android:textColor="@color/black"
                                     android:textSize="16sp"
-                                    app:layout_constraintTop_toBottomOf="@id/tvArrhythmia"
                                     app:layout_constraintStart_toStartOf="parent"
-                                    android:layout_marginTop="4dp" />
+                                    app:layout_constraintTop_toBottomOf="@id/tvArrhythmia" />
                             </androidx.constraintlayout.widget.ConstraintLayout>
                         </androidx.cardview.widget.CardView>
 
@@ -455,7 +470,7 @@
                         android:id="@+id/tvMapText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="지도로 보기"
+                        android:text="SPA"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold"
